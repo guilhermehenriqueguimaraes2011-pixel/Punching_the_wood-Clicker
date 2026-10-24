@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Accont - Punching The Wood!</title>
+<link rel="stylesheet" href="cadastro.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <main class="cadastro">
+        <a class="voltar" href="inicio.html">Voltar</a>
+        <h1>Create Account</h1>
+        <p class="subtitulo">Crie sua conta para jogar!</p>
+
+ <form id="formCadastro">
+<label for="usuario">Nome de usuário</label>
+    <input id="usuario"
+    name="usuario"
+    type="text"
+    minlength="3"
+    maxlength="20"
+    autocomplete="username"
+    placeholder="Seu nome no jogo"
+    required>
+
+<label for="email">E-mail</label>
+    <input id="email"
+    name="email"
+    type="email"
+    autocomplete="email"
+    placeholder="voce@exemplo.com"
+    required>
+
+<label for="senha">Senha</label>
+    <input id="senha"
+    name="senha"
+    type="password"
+    minlength="8"
+    autocomplete="new-password"
+    placeholder="Mínimo de 8 caracteres"
+    required>
+
+<label for="confirmarSenha">Confirmar senha</label>
+    <input id="confirmarSenha"
+    name="confirmarSenha"
+    type="password"
+    minlength="8"
+    autocomplete="new-password"
+    placeholder="Digite a senha novamente"
+    required>
+
+<p id="mensagem" class="mensagem" role="status" aria-live="polite"></p>
+<button type="submit">Create Account</button>
+</form>
+ </main>
+    <script src="cadastro.js"></script>
+</body>
+</html>
