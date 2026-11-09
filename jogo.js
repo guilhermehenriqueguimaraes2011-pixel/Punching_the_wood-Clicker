@@ -11,3 +11,4 @@ personagem.addEventListener("click", function() {
     let largura = personagem.offsetWidth;
     personagem.classList.add("soco");
 });
+

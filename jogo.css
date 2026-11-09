@@ -56,6 +56,7 @@ button:hover{
 .area-jogo{
     flex: 1;
 }
+
 .soco {
     animation: socar 0.2s ease;
 }
@@ -72,4 +73,11 @@ button:hover{
     100% {
         transform: scale(1) translateX(0);
     }
+}
+.personagem{
+    position: absolute;
+    left: 40%;
+    bottom: 100px;
+    transform-origin: bottom left;
+    transform: scale(3);
 }
