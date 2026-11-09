@@ -1,3 +1,61 @@
+body{
+    background-image: url('./assets/backgrounds/Clareira_Pixelada.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    min-height: 100vh;
+    margin: 0;
+
+    image-rendering: pixelated;
+}
+.cabecalho{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+.titulo{
+
+}
+.botoes-superiores{
+    display: flex;
+    gap: 10px;
+}
+.container-principal{
+    display: flex;
+    flex: 1;
+}
+.menu-lateral{
+    width: 240px;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+button{
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid #08420d;
+    border-radius: 5px;
+    background-color: rgb(8, 124, 47);
+    color: #000000;
+    text-align: left;
+    transition: background-color 0.2s;
+}
+button:hover{
+    background-color: #2bc40d;
+}
+.botoes-superiores button{
+    text-align: center;
+}
+.area-jogo{
+    flex: 1;
+}
 .soco {
     animation: socar 0.2s ease;
 }
