@@ -90,7 +90,57 @@ body.started #playButton {
 #botaoEntrar:disabled {
     cursor: default;
 }
+body.started #botaoCriar,
+body.started #botaoEntrar {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
 
+.entrando {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.entrando.visivel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+.criando {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.criando.visivel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+body.started #botaoCriar.escondido,
+body.started #botaoEntrar.escondido {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
 .container {
     position: absolute;
     top: 55%;
@@ -109,4 +159,153 @@ body.started #playButton {
 
 #botaoEntrar {
     grid-area: 2 / 1;
+}
+#UsuarioEntrar,
+#SenhaEntrar {
+    width: 370px;
+    height: 60px;
+    box-sizing: border-box;
+    padding: 0 16px;
+    background-color: #0B1918;
+    color: #A5E8AC;
+    border: 3px solid #72D6A0;
+    border-radius: 0;
+    font-family: "Press Start 2P", monospace;
+    font-size: 14px;
+    box-shadow: 4px 4px 0 #153D32;
+    outline: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+#UsuarioEntrar::placeholder,
+#SenhaEntrar::placeholder {
+    color: #4F8F73;
+    font-family: "Press Start 2P", monospace;
+    font-size: 12px;
+}
+
+#UsuarioEntrar:focus,
+#SenhaEntrar:focus {
+    background-color: #153D32;
+    border-color: #A5E8AC;
+    color: white;
+}
+
+#entrar {
+    width: 370px;
+    height: 60px;
+    background-color: #0B1918;
+    color: #A5E8AC;
+    border: 3px solid #72D6A0;
+    border-radius: 0;
+    font-family: "Press Start 2P", monospace;
+    font-size: 20px;
+    box-shadow: 4px 4px 0 #153D32;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#entrar:hover {
+    background: #153D32;
+    color: white;
+}
+
+#entrar:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+}
+
+#entrar:disabled {
+    cursor: default;
+}
+#UsuarioCriar,
+#SenhaCriar {
+    width: 370px;
+    height: 60px;
+    box-sizing: border-box;
+    padding: 0 16px;
+    background-color: #0B1918;
+    color: #A5E8AC;
+    border: 3px solid #72D6A0;
+    border-radius: 0;
+    font-family: "Press Start 2P", monospace;
+    font-size: 14px;
+    box-shadow: 4px 4px 0 #153D32;
+    outline: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+#UsuarioCriar::placeholder,
+#SenhaCriar::placeholder {
+    color: #4F8F73;
+    font-family: "Press Start 2P", monospace;
+    font-size: 12px;
+}
+
+#UsuarioCriar:focus,
+#SenhaCriar:focus {
+    background-color: #153D32;
+    border-color: #A5E8AC;
+    color: white;
+}
+
+#criar {
+    width: 370px;
+    height: 60px;
+    background-color: #0B1918;
+    color: #A5E8AC;
+    border: 3px solid #72D6A0;
+    border-radius: 0;
+    font-family: "Press Start 2P", monospace;
+    font-size: 20px;
+    box-shadow: 4px 4px 0 #153D32;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#criar:hover {
+    background: #153D32;
+    color: white;
+}
+
+#criar:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+}
+
+#criar:disabled {
+    cursor: default;
+}
+#botaoVoltar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    background-color: #0B1918;
+    color: #A5E8AC;
+    border: 3px solid #72D6A0;
+    border-radius: 0;
+    font-family: "Press Start 2P", monospace;
+    font-size: 24px;
+    box-shadow: 4px 4px 0 #153D32;
+    cursor: pointer;
+    display: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+body.started #botaoVoltar {
+    display: block;
+}
+
+#botaoVoltar:hover {
+    background: #153D32;
+    color: white;
+}
+
+#botaoVoltar:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
 }

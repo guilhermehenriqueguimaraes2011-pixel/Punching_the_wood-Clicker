@@ -22,7 +22,20 @@
             <button id="botaoCriar" disabled>Create Account</button>
             <button id="botaoEntrar" disabled>Log in Account</button>
         </div>
+        <div class="entrando">
+            <input disabled type="text" id="UsuarioEntrar" name="Usuario" placeholder="User name/User email">
+            <input disabled type="text" id="SenhaEntrar" name="Usuario" placeholder="password">
+            <button id="entrar" disabled>Log in</button>
+        </div>
+        <div class="criando">
+            <input disabled type="text" id="UsuarioCriar" name="Usuario" placeholder="User name/User email">
+            <input disabled type="text" id="SenhaCriar" name="Usuario" placeholder="password">
+            <button id="criar" disabled>Create</button>
+        </div>
+        <button id="botaoVoltar">←</button>
     </main>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
     <script src="inicio.js"></script>
 </body>
 </html>

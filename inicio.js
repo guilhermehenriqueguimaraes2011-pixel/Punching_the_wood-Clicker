@@ -28,3 +28,106 @@
                 }
             });
         });
+        //entrando 
+$(document).ready(function() {
+
+    let BtEntrar = $("#botaoEntrar");
+
+function mudandoPagina() {
+    $("#botaoCriar, #botaoEntrar").prop("disabled", true);
+
+    $("#UsuarioEntrar").prop("disabled", false);
+    $("#SenhaEntrar").prop("disabled", false);
+    $("#entrar").prop("disabled", false);
+
+    $("#botaoCriar, #botaoEntrar")
+        .removeClass("visivel")
+        .addClass("escondido");
+
+        $(".entrando")
+            .removeClass("escondido")
+            .addClass("visivel");
+    }
+
+    function voltarPagina() {
+        $("#botaoCriar, #botaoEntrar")
+            .removeClass("escondido")
+            .addClass("visivel");
+
+        $(".entrando")
+            .removeClass("visivel")
+            .addClass("escondido");
+    }
+
+    BtEntrar.on("click", mudandoPagina);
+
+    $("#botaoVoltar").on("click", voltarPagina);
+
+});
+$(document).ready(function() {
+
+    let BtCriar = $("#botaoCriar");
+
+function mudandoPagina() {
+    $("#botaoCriar, #botaoEntrar").prop("disabled", true);
+
+    $("#UsuarioCriar").prop("disabled", false);
+    $("#SenhaCriar").prop("disabled", false);
+    $("#criar").prop("disabled", false);
+
+    $("#botaoCriar, #botaoEntrar")
+        .removeClass("visivel")
+        .addClass("escondido");
+
+        $(".criando")
+            .removeClass("escondido")
+            .addClass("visivel");
+    }
+
+    function voltarPagina() {
+        $("#botaoCriar, #botaoEntrar")
+            .removeClass("escondido")
+            .addClass("visivel");
+
+        $(".criando")
+            .removeClass("visivel")
+            .addClass("escondido");
+    }
+
+    BtCriar.on("click", mudandoPagina);
+
+    $("#botaoVoltar").on("click", voltarPagina);
+
+});
+$(document).ready(function() {
+
+    function voltarInicio() {
+        $("body").removeClass("started");
+
+        $("#botaoCriar, #botaoEntrar")
+            .prop("disabled", true)
+            .removeClass("escondido")
+            .removeClass("visivel");
+
+        $(".entrando").removeClass("visivel");
+        $("#UsuarioEntrar").prop("disabled", true).val("");
+        $("#SenhaEntrar").prop("disabled", true).val("");
+        $("#entrar").prop("disabled", true);
+
+        $(".criando").removeClass("visivel");
+        $("#UsuarioCriar").prop("disabled", true).val("");
+        $("#SenhaCriar").prop("disabled", true).val("");
+        $("#criar").prop("disabled", true);
+    }
+
+    $("#botaoVoltar").on("click", voltarInicio);
+
+});
+
+        //Banco de dados
+
+     const BancoDeDados = supabase.createClient(
+    "https://zeaaeiiwftctedrumuzp.supabase.co",
+    "sb_publishable_dPCcGEn70ozMH7gqL44zxQ_qvIMOpFa"
+);
+
