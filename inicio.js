@@ -6,6 +6,7 @@
                 document.body.classList.add("started");
                 document.getElementById("botaoCriar").disabled = false;
                 document.getElementById("botaoEntrar").disabled = false;
+                document.getElementById("botaoInformacoes").disabled = false;
 
                 if (audio) {
                     audio.volume = 0;
@@ -67,7 +68,6 @@ function mudandoPagina() {
 $(document).ready(function() {
 
     let BtCriar = $("#botaoCriar");
-
 function mudandoPagina() {
     $("#botaoCriar, #botaoEntrar").prop("disabled", true);
 
@@ -122,6 +122,24 @@ $(document).ready(function() {
 
     $("#botaoVoltar").on("click", voltarInicio);
 
+});
+
+// BOTÃO INFORMAÇÕES
+$(document).ready(function() {
+    $("#botaoInformacoes").on("click", function() {
+        $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
+            .addClass("escondido");
+        $(".informacoes").addClass("visivel");
+    });
+
+    // VOLTAR DAS INFORMAÇÕES
+    $("#botaoVoltar").on("click", function() {
+        if ($(".informacoes").hasClass("visivel")) {
+            $(".informacoes").removeClass("visivel");
+            $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
+                .removeClass("escondido");
+        }
+    });
 });
 
         //Banco de dados
