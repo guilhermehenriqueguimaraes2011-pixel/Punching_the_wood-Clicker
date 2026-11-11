@@ -27,9 +27,5 @@ personagem.addEventListener("click", function() {
    personagem.src = `${acao}?t=${Date.now()}`;
    temporizador = setTimeout(()=>{
        personagem.src = parado
-   }, 320);
-
-   personagem.classList.remove("soco");
-   let largura = personagem.offsetWidth;
-   personagem.classList.add("soco");
+   }, 300);
 });

@@ -1,0 +1,107 @@
+body{
+    background-image: url('./assets/backgrounds/Clareira_Pixelada.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    min-height: 100vh;
+    margin: 0;
+    font-family: "Press Start 2P", monospace;
+    image-rendering: pixelated;
+}
+.cabecalho{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+.titulo{
+    font-size: 40px;
+    padding-left: 12px;
+    width: 100%;
+    text-align: left;
+    font-family: "Press Start 2P", monospace;
+    color: white;
+}
+.botoes-superiores{
+    display: flex;
+    gap: 10px;
+}
+.container-principal{
+    display: flex;
+    flex: 1;
+}
+.menu-lateral{
+    width: 240px;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+button{
+    padding: 10px 15px;
+    font-size: 14px;
+    background-color: #0B1918;
+    color: #A5E8AC;
+    border: 3px solid #72D6A0;
+    border-radius: 0;
+    font-family: "Press Start 2P", monospace;
+    font-size: 20px;
+    box-shadow: 4px 4px 0 #153D32;
+    cursor: pointer;
+    transition: opacity 0.8s ease, visibility 0.8s ease, background-color 0.2s ease, color 0.2s ease;
+}
+button:hover{
+    background: #153D32;
+    color: white;
+}
+.botoes-superiores button{
+    text-align: center;
+}
+.area-jogo{
+    flex: 1;
+}
+
+.soco {
+    animation: socar 0.2s ease;
+}
+
+@keyframes socar {
+    0% {
+        transform: scale(1) translateX(0);
+    }
+
+    50% {
+        transform: scale(0.9) translateX(10px);
+    }
+
+    100% {
+        transform: scale(1) translateX(0);
+    }
+}
+.personagem{
+    position: absolute;
+    left: 30%;
+    bottom: 100px;
+    transform-origin: bottom left;
+    transform: scale(8);
+}
+
+.contador {
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 225px;
+    height: 60px;
+    padding: 10px 15px;
+    font-size: 14px;
+    background-color: #0B1918;
+    color: #A5E8AC;
+    border: 3px solid #72D6A0;
+    border-radius: 0;
+    font-family: "Press Start 2P", monospace;
+    font-size: 20px;
+    box-shadow: 4px 4px 0 #153D32;
+}
