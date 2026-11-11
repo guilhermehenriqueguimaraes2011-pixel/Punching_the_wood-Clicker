@@ -319,32 +319,22 @@ body.started #botaoVoltar {
     display: none;
     opacity: 0;
     visibility: hidden;
-
     position: absolute;
     top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
-
-    width: 600px;
+    width: 750px;
     max-width: 90%;
-    max-height: 65vh;
+    max-height: 70vh;
     overflow-y: auto;
-
-    padding: 30px;
-
-    background-color: #0B1918;
+    padding: 25px;
+    background: rgba(5, 18, 15, 0.96);
+    border: 4px solid #72D6A0;
+    box-shadow: 7px 7px 0 #153D32;
     color: #A5E8AC;
-    border: 3px solid #72D6A0;
-
     font-family: "Press Start 2P", monospace;
-    font-size: 12px;
-    line-height: 2;
-
     text-align: center;
-
-    box-shadow: 4px 4px 0 #153D32;
-
-    transition: opacity 0.8s ease;
+    z-index: 5;
 }
 
 .informacoes.visivel {
@@ -354,8 +344,12 @@ body.started #botaoVoltar {
 }
 
 .informacoes h2 {
-    font-size: 18px;
-    margin-bottom: 30px;
+    font-size: 20px;
+    color: white;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #72D6A0;
+    text-shadow: 4px 4px 0 #153D32;
 }
 
 .informacoes h3 {
@@ -368,78 +362,15 @@ body.started #botaoVoltar {
     font-size: 10px;
     line-height: 2.2;
 }
-.informacoes {
-    display: none;
-    opacity: 0;
-    visibility: hidden;
-
-    position: absolute;
-    top: 55%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    width: 750px;
-    max-width: 90%;
-    max-height: 70vh;
-    overflow-y: auto;
-
-    padding: 25px;
-
-    background: rgba(5, 18, 15, 0.96);
-
-    border: 4px solid #72D6A0;
-    box-shadow: 7px 7px 0 #153D32;
-
-    color: #A5E8AC;
-
-    font-family: "Press Start 2P", monospace;
-    text-align: center;
-
-    z-index: 5;
-}
-
-.informacoes.visivel {
-    display: block;
-    opacity: 1;
-    visibility: visible;
-}
-
-/* TÍTULO */
-
-.informacoes h2 {
-    font-size: 20px;
-    color: white;
-
-    padding-bottom: 20px;
-    margin-bottom: 25px;
-
-    border-bottom: 3px solid #72D6A0;
-
-    text-shadow: 4px 4px 0 #153D32;
-}
-
-/* BLOCOS */
 
 .informacao-bloco {
     background: #0B1918;
-
     border: 2px solid #397D5C;
-
     padding: 18px;
     margin-bottom: 18px;
-
     box-shadow: 3px 3px 0 #153D32;
-
     transition: 0.2s;
 }
-
-.informacao-bloco:hover {
-    border-color: #A5E8AC;
-    background: #153D32;
-    transform: scale(1.02);
-}
-
-/* SUBTÍTULOS */
 
 .informacao-bloco h3 {
     color: #A5E8AC;
@@ -447,15 +378,11 @@ body.started #botaoVoltar {
     margin-bottom: 15px;
 }
 
-/* TEXTOS */
-
 .informacao-bloco p {
     color: #D0EBD5;
     font-size: 9px;
     line-height: 2.3;
 }
-
-/* MENSAGEM FINAL */
 
 .mensagem-final {
     color: #A5E8AC;
@@ -463,8 +390,6 @@ body.started #botaoVoltar {
     margin-top: 30px;
     text-shadow: 3px 3px 0 #153D32;
 }
-
-/* BARRA DE ROLAGEM */
 
 .informacoes::-webkit-scrollbar {
     width: 9px;
