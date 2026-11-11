@@ -25,6 +25,14 @@ if (botaoMelhoria && caixaMelhoria) {
         caixaMelhoria.classList.toggle("escondido");
     });
 }
+const botaoMelhoriaPorSegundo = document.getElementById("melhoriaSegundo");
+const caixaMelhoriaPorSegundo = document.getElementById("caixa-melhoria-por-segundo");
+
+if (botaoMelhoriaPorSegundo && caixaMelhoriaPorSegundo) {
+    botaoMelhoriaPorSegundo.addEventListener("click", function() {
+        caixaMelhoriaPorSegundo.classList.toggle("escondido");
+    });
+}
 
 function comprarMelhoria() {
     if (cliques >= 10) {
