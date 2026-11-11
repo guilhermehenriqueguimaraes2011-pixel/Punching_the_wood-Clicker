@@ -13,7 +13,7 @@ body::before {
     z-index: -1;
     opacity: 0;
     transition: opacity 1.8s ease;
-    background-image: url("assets/backgrounds/Clareira_Pixelada.png");
+    background-image: url("jogo/assets/backgrounds/Clareira_Pixelada.png");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center 70%;
@@ -274,6 +274,10 @@ body.started #botaoInformacoes.escondido  {
     color: white;
 }
 
+#playButton:active,
+#botaoCriar:active,
+#botaoEntrar:active,
+#botaoInformacoes:active,
 #criar:active {
     transform: translate(4px, 4px);
     box-shadow: none;
@@ -335,6 +339,26 @@ body.started #botaoVoltar {
     font-family: "Press Start 2P", monospace;
     text-align: center;
     z-index: 5;
+}
+
+.fechar-informacoes {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 42px;
+    height: 42px;
+    border: 3px solid #72D6A0;
+    background: #0B1918;
+    color: #A5E8AC;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #153D32;
+}
+
+.fechar-informacoes:hover {
+    background: #153D32;
+    color: white;
 }
 
 .informacoes.visivel {

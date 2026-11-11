@@ -35,13 +35,13 @@ $(document).ready(function() {
     let BtEntrar = $("#botaoEntrar");
 
 function mudandoPagina() {
-    $("#botaoCriar, #botaoEntrar").prop("disabled", true);
+    $("#botaoCriar, #botaoEntrar, #botaoInformacoes").prop("disabled", true);
 
     $("#UsuarioEntrar").prop("disabled", false);
     $("#SenhaEntrar").prop("disabled", false);
     $("#entrar").prop("disabled", false);
 
-    $("#botaoCriar, #botaoEntrar")
+    $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
         .removeClass("visivel")
         .addClass("escondido");
 
@@ -51,9 +51,11 @@ function mudandoPagina() {
     }
 
     function voltarPagina() {
-        $("#botaoCriar, #botaoEntrar")
+        $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
             .removeClass("escondido")
             .addClass("visivel");
+
+        $("#botaoInformacoes").prop("disabled", false);
 
         $(".entrando")
             .removeClass("visivel")
@@ -69,13 +71,13 @@ $(document).ready(function() {
 
     let BtCriar = $("#botaoCriar");
 function mudandoPagina() {
-    $("#botaoCriar, #botaoEntrar").prop("disabled", true);
+    $("#botaoCriar, #botaoEntrar, #botaoInformacoes").prop("disabled", true);
 
     $("#UsuarioCriar").prop("disabled", false);
     $("#SenhaCriar").prop("disabled", false);
     $("#criar").prop("disabled", false);
 
-    $("#botaoCriar, #botaoEntrar")
+    $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
         .removeClass("visivel")
         .addClass("escondido");
 
@@ -85,9 +87,11 @@ function mudandoPagina() {
     }
 
     function voltarPagina() {
-        $("#botaoCriar, #botaoEntrar")
+        $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
             .removeClass("escondido")
             .addClass("visivel");
+
+        $("#botaoInformacoes").prop("disabled", false);
 
         $(".criando")
             .removeClass("visivel")
@@ -104,10 +108,12 @@ $(document).ready(function() {
     function voltarInicio() {
         $("body").removeClass("started");
 
-        $("#botaoCriar, #botaoEntrar")
+        $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
             .prop("disabled", true)
             .removeClass("escondido")
             .removeClass("visivel");
+
+        $("#botaoInformacoes").prop("disabled", false);
 
         $(".entrando").removeClass("visivel");
         $("#UsuarioEntrar").prop("disabled", true).val("");
@@ -130,6 +136,12 @@ $(document).ready(function() {
         $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
             .addClass("escondido");
         $(".informacoes").addClass("visivel");
+    });
+
+    $("#fecharInformacoes").on("click", function() {
+        $(".informacoes").removeClass("visivel");
+        $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
+            .removeClass("escondido");
     });
 
     // VOLTAR DAS INFORMAÇÕES

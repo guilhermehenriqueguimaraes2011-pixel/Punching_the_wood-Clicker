@@ -1,19 +1,67 @@
 let cliques = 0;
 let contador = document.querySelector("#contadorCliques");
 let personagem = document.querySelector(".personagem img");
+let musica = document.querySelector("#bgm");
+let promptInicio = document.querySelector("#promptInicio");
+let madeira = document.querySelector(".madeira img");
+let particulas = document.querySelector(".particulas");
 const parado = 'assets/sprites/Default/JerryIdle.gif';
 const acao = 'assets/sprites/Default/JerryAction.gif';
+const madeiraParada = 'assets/sprites/Default/default_wood_idle.png';
+const madeiraAcao = 'assets/sprites/Default/default_wood_action.png';
 let temporizador;
+let temporizadorMadeira;
+let musicaIniciada = false;
+
+function soltarParticulas() {
+    if (!particulas) return;
+
+    for (let i = 0; i < 8; i++) {
+        const particula = document.createElement("span");
+        const direcaoX = Math.round(Math.random() * 100 - 50);
+        const direcaoY = Math.round(Math.random() * -75 - 15);
+
+        particula.className = "particula";
+        particula.style.setProperty("--dx", `${direcaoX}px`);
+        particula.style.setProperty("--dy", `${direcaoY}px`);
+        particulas.appendChild(particula);
+        particula.addEventListener("animationend", () => particula.remove(), { once: true });
+    }
+}
 
 if (personagem && contador) {
     personagem.addEventListener("click", function() {
         cliques++;
         contador.textContent = cliques;
+
+        if (promptInicio) {
+            promptInicio.classList.add("escondido");
+        }
+
+        if (musica && !musicaIniciada) {
+            musicaIniciada = true;
+            const reproducao = musica.play();
+            if (reproducao) {
+                reproducao.catch(() => {
+                    musicaIniciada = false;
+                });
+            }
+        }
+
         clearTimeout(temporizador);
         personagem.src = `${acao}?t=${Date.now()}`;
         temporizador = setTimeout(() => {
             personagem.src = parado;
         }, 300);
+
+        if (madeira) {
+            clearTimeout(temporizadorMadeira);
+            madeira.src = `${madeiraAcao}?t=${Date.now()}`;
+            soltarParticulas();
+            temporizadorMadeira = setTimeout(() => {
+                madeira.src = madeiraParada;
+            }, 300);
+        }
     });
 }
 

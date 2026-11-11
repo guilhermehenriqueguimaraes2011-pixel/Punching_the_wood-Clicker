@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="inicio.css">
-    <link rel="icon" href="assets/favicon.png">
+    <link rel="icon" href="jogo/assets/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <title>Punching The Wood!</title>
     <audio id="bgm" loop preload="auto">
-        <source src="assets/musics/5-friday-theme.mp3" type="audio/mpeg">
+        <source src="jogo/assets/musics/5-friday-theme.mp3" type="audio/mpeg">
     </audio>
 </head>
 <body>
@@ -18,22 +18,23 @@
         </div>
 
         <div class="container">
-            <button id="playButton">Play</button>
-            <button id="botaoCriar" disabled>Create Account</button>
-            <button id="botaoEntrar" disabled>Log in Account</button>
+            <button id="playButton">Jogar</button>
+            <button id="botaoCriar" disabled>Criar Conta</button>
+            <button id="botaoEntrar" disabled>Fazer Log in</button>
             <button id="botaoInformacoes" disabled>Informações</button>
         </div>
         <div class="entrando">
-            <input disabled type="text" id="UsuarioEntrar" name="Usuario" placeholder="User name/User email">
-            <input disabled type="text" id="SenhaEntrar" name="Usuario" placeholder="password">
+            <input disabled type="text" id="UsuarioEntrar" name="Usuario" placeholder="Email / Nome do usuário">
+            <input disabled type="text" id="SenhaEntrar" name="Usuario" placeholder="Senha">
             <button id="entrar" disabled>Log in</button>
         </div>
         <div class="criando">
-            <input disabled type="text" id="UsuarioCriar" name="Usuario" placeholder="User name/User email">
-            <input disabled type="text" id="SenhaCriar" name="Usuario" placeholder="password">
-            <button id="criar" disabled>Create</button>
+            <input disabled type="text" id="UsuarioCriar" name="Usuario" placeholder="Email / Nome do usuário">
+            <input disabled type="text" id="SenhaCriar" name="Usuario" placeholder="Senha">
+            <button id="criar" disabled>Criar</button>
         </div>
         <div class="informacoes">
+            <button id="fecharInformacoes" class="fechar-informacoes" aria-label="Fechar informações" title="Fechar">✕</button>
             <h2>INFORMAÇÕES</h2>
             <h3>COMO JOGAR</h3>
             <h3>🌳 PUNCHING THE WOOD!</h3>

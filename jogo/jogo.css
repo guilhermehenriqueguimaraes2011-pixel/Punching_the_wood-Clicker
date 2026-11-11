@@ -54,6 +54,44 @@ body {
     background-color: rgba(0, 0, 0, 0.3);
 }
 
+.FOV {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: #000;
+}
+.fundo {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    background-image: url('./assets/backgrounds/Clareira_Pixelada.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    transform-origin: center center;
+    transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
+                filter 0.8s ease;
+}
+.FOV.modo-fov .fundo {
+    transform: perspective(900px) rotateX(5deg) scale(1.15);
+    filter: brightness(0.35) blur(1px);
+}
+.FOV::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%);
+    transition: opacity 0.8s ease;
+}
+.FOV.modo-fov::after {
+    opacity: 1;
+}
+
 button {
     padding: 10px 15px;
     font-size: 14px;
@@ -81,30 +119,92 @@ button:hover {
     flex: 1;
 }
 
-.soco {
-    animation: socar 0.2s ease;
+.prompt-inicio {
+    position: absolute;
+    top: 24%;
+    left: 50%;
+    z-index: 2;
+    width: min(90%, 760px);
+    transform: translateX(-50%);
+    color: #fff;
+    font-family: "Press Start 2P", monospace;
+    font-size: clamp(12px, 2vw, 22px);
+    line-height: 1.8;
+    text-align: center;
+    text-shadow: 3px 3px 0 #000, -2px -2px 0 #000;
+    animation: piscar-prompt 0.9s steps(1, end) infinite;
+    pointer-events: none;
 }
 
-@keyframes socar {
-    0% {
-        transform: scale(1) translateX(0);
+@keyframes piscar-prompt {
+    0%, 49% {
+        color: #fff;
+        text-shadow: 3px 3px 0 #000, -2px -2px 0 #000;
     }
 
-    50% {
-        transform: scale(0.9) translateX(10px);
+    50%, 100% {
+        color: #000;
+        text-shadow: 3px 3px 0 #fff, -2px -2px 0 #fff;
     }
+}
 
-    100% {
-        transform: scale(1) translateX(0);
-    }
+.soco {
+    animation: socar 0.2s ease;
 }
 
 .personagem {
     position: absolute;
     left: 30%;
-    bottom: 100px;
+    bottom: calc(10% + 10px);
     transform-origin: bottom left;
-    transform: scale(8);
+    transform: scale(10);
+    z-index: 1;
+}
+
+.madeira {
+    position: absolute;
+    left: calc(30% + 180px);
+    bottom: 10%;
+    width: 320px;
+    height: 480px;
+    image-rendering: pixelated;
+}
+
+.madeira img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.particulas {
+    position: absolute;
+    left: 50%;
+    top: 75%;
+    pointer-events: none;
+}
+
+.particula {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #9b592d;
+    border: 1px solid #57351f;
+    image-rendering: pixelated;
+    animation: lasca-voando 550ms ease-out forwards;
+}
+
+@keyframes lasca-voando {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    }
+
+    to {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy)) scale(0.35) rotate(160deg);
+    }
 }
 
 .contador {
@@ -202,4 +302,18 @@ button:hover {
 .loja-item button {
     font-size: 12px;
     padding: 8px 10px;
+}
+
+@media (max-width: 700px) {
+    .personagem {
+        left: 15%;
+        transform: scale(5);
+    }
+
+    .madeira {
+        left: calc(15% + 155px);
+        width: 112px;
+        height: 168px;
+        bottom: 100px;
+    }
 }
