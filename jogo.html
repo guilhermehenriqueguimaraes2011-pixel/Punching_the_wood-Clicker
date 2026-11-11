@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -6,57 +7,42 @@
     <title>Punching The Wood!</title>
     <link rel="stylesheet" href="jogo.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-</head>
-<body>
     <audio id="bgm" loop preload="auto">
         <source src="assets/musics/5-friday-theme.mp3" type="audio/mpeg">
     </audio>
+</head>
+<body>
+    <div class="fundo">
+        <header class="cabecalho">
+            <h1 class="titulo">Punching The Wood!</h1>
 
-    <div class="FOV">
-        <div class="fundo">
-            <header class="cabecalho">
-                <h1 class="titulo">Punching The Wood!</h1>
+            <nav class="botoes-superiores">
+                <button id="configuracoes">Configurações</button>
+                <button id="ranking">Ranking Global</button>
+            </nav>
+        </header>
+        <div class="container-principal">
+            <aside class="menu-lateral">
+                <button id="melhoriaClique">Melhoria de Clique</button>
+                <div id="caixa-melhoria" class="caixaa escondido">
+                    <p><strong>Alguma coisa</strong></p>
+                    <p>+1 por clique</p>
+                    <button onclick="comprarMelhoria()">Comprar (10 Cliques)</button>
+                </div>
+                <button id="melhoriaSegundo">Melhoria de Clique por Segundo</button>
+                <button id="loja">Loja</button>
+            </aside>
 
-                <nav class="botoes-superiores">
-                    <button id="configuracoes">Configurações</button>
-                    <button id="ranking">Ranking Global</button>
-                </nav>
-            </header>
-            <div class="container-principal">
-                <aside class="menu-lateral">
-                    <button id="melhoriaClique">Melhoria de Clique</button>
-                    <button id="melhoriaSegundo">Melhoria de Clique por Segundo</button>
-                    <button id="loja">Loja</button>
-                </aside>
-
-                <main class="area-jogo">
-                    <div class="contador">
-                        <p>Cliques: <span id="contadorCliques">0</span> </p>
-                    </div>
-                    <div class="personagem">
-                        <img src="assets/sprites/Default/JerryIdle.gif" alt="Jerry">
-                    </div>
-                </main>
-            </div>
+            <main class="area-jogo">
+                <div class="contador">
+                    <p>Cliques: <span id="contadorCliques">0</span> </p>
+                </div>
+                <div class="personagem">
+                    <img src="assets/sprites/Default/JerryIdle.gif" alt="Jerry">
+                </div>
+            </main>
         </div>
     </div>
-
-    <div class="loja" id="lojaPainel">
-        <div class="loja-janela">
-            <div class="loja-topo">
-                <h2>Loja</h2>
-                <button id="fecharLoja">✕</button>
-            </div>
-            <div class="loja-itens">
-                <div class="loja-item"><span>---</span><button>Comprar</button></div>
-                <div class="loja-item"><span>---</span><button>Comprar</button></div>
-                <div class="loja-item"><span>---</span><button>Comprar</button></div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
-    <script src="jogo.js"></script>
+    <script src= "jogo.js"></script>
 </body>
 </html>
