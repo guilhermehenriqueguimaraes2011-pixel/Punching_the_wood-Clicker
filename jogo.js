@@ -30,37 +30,9 @@ personagem.addEventListener("click", function() {
    }, 300);
 });
 
+const botaoMelhoria = document.getElementById("melhoriaClique");
+const caixaMelhoria = document.getElementById("caixa-melhoria");
 
-
-
-$(document).ready(function() {
-
-    let BtLoja = $("#loja");
-    let BtFecharLoja = $("#fecharLoja");
-
-    function abrirLoja() {
-        $(".FOV").addClass("modo-fov");
-        $("#lojaPainel").addClass("aberta");
-    }
-
-    function fecharLoja() {
-        $(".FOV").removeClass("modo-fov");
-        $("#lojaPainel").removeClass("aberta");
-    }
-
-    function cliqueForaDaLoja(e) {
-        if (e.target === this) {
-            fecharLoja();
-        }
-    }
- if (e.key === "Escape") {
-            fecharLoja();
-        }
-
-    BtLoja.on("click", abrirLoja);
-    BtFecharLoja.on("click", fecharLoja);
-    $("#lojaPainel").on("click", cliqueForaDaLoja);
-    $(document).on("keydown", teclaPressionada);
-
+botaoMelhoria.addEventListener("click", function() {
+    caixaMelhoria.classList.toggle("escondido");
 });
-// randomizer para pet;
