@@ -1,52 +1,14 @@
-html, body {
-    margin: 0;
-    height: 100%;
-    overflow: hidden;
-    background: #000;
-    font-family: "Press Start 2P", monospace;
-    image-rendering: pixelated;
-}
-
-
-.FOV {
-    position: fixed;
-    inset: 0;
-    overflow: hidden;
-    background: #000;
-}
-.fundo {
-    position: relative;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-
+body{
     background-image: url('./assets/backgrounds/Clareira_Pixelada.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 
-    transform-origin: center center;
-    transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
-                filter 0.8s ease;
+    min-height: 100vh;
+    margin: 0;
+    font-family: "Press Start 2P", monospace;
+    image-rendering: pixelated;
 }
-.FOV.modo-fov .fundo {
-    transform: perspective(900px) rotateX(5deg) scale(1.15);
-    filter: brightness(0.35) blur(1px);
-}
-.FOV::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0;
-    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%);
-    transition: opacity 0.8s ease;
-}
-.FOV.modo-fov::after {
-    opacity: 1;
-}
-
-
 .cabecalho{
     display: flex;
     justify-content: space-between;
@@ -70,7 +32,6 @@ html, body {
 .container-principal{
     display: flex;
     flex: 1;
-    min-height: 0;
 }
 .menu-lateral{
     width: 240px;
@@ -80,12 +41,6 @@ html, body {
     gap: 12px;
     background-color: rgba(0, 0, 0, 0.3);
 }
-.area-jogo{
-    flex: 1;
-    position: relative;
-}
-
-
 button{
     padding: 10px 15px;
     font-size: 14px;
@@ -106,14 +61,26 @@ button:hover{
 .botoes-superiores button{
     text-align: center;
 }
+.area-jogo{
+    flex: 1;
+}
 
 .soco {
     animation: socar 0.2s ease;
 }
+
 @keyframes socar {
-    0%   { transform: scale(8)   translateX(0); }
-    50%  { transform: scale(7.2) translateX(10px); }
-    100% { transform: scale(8)   translateX(0); }
+    0% {
+        transform: scale(1) translateX(0);
+    }
+
+    50% {
+        transform: scale(0.9) translateX(10px);
+    }
+
+    100% {
+        transform: scale(1) translateX(0);
+    }
 }
 .personagem{
     position: absolute;
@@ -122,7 +89,6 @@ button:hover{
     transform-origin: bottom left;
     transform: scale(8);
 }
-
 
 .contador {
     margin-top: 20px;
@@ -139,65 +105,19 @@ button:hover{
     font-size: 20px;
     box-shadow: 4px 4px 0 #153D32;
 }
+.caixaa{
+    background-color:rgba(20, 40, 20, 0.9);
+    color :white;
+    border: 2px solid #4CAF50;
+    border-radius:5px;
+    padding:10px;
+    width:220px;
+    margin-top: 5px;
+    margin-bottom:10px;
+    font-family:sans-serif;
+    font-size:14px;
+}
 
-
-.loja {
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-}
-.loja.aberta {
-    pointer-events: auto;
-}
-.loja-janela {
-    width: min(1000px, 1200px);
-    
-    height: min(900px, 1200px);
-    overflow: auto;
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #0B1918;
-    color: #A5E8AC;
-    border: 3px solid #72D6A0;
-    border-radius: 0;
-    box-shadow: 4px 4px 0 #153D32;
-    font-family: "Press Start 2P", monospace;
-
-    opacity: 0;
-    transform: translateY(50px) scale(0.92);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-.loja.aberta .loja-janela {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    transition: opacity 0.5s ease 0.2s,
-    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s;
-}
-.loja-topo {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-.loja-topo h2 {
-    margin: 0;
-    font-size: 24px;
-}
-.loja-itens {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-.loja-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    font-size: 16px;
-    background-color: #153D32;
-    border: 3px solid #72D6A0;
+.escondido{
+    display:none;
 }
