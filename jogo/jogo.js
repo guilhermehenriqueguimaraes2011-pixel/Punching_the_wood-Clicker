@@ -1,4 +1,3 @@
-let cliques = 0;
 let contador = document.querySelector("#contadorCliques");
 let personagem = document.querySelector(".personagem img");
 let musica = document.querySelector("#bgm");
@@ -31,8 +30,6 @@ function soltarParticulas() {
 
 if (personagem && contador) {
     personagem.addEventListener("click", function() {
-        cliques++;
-        contador.textContent = cliques;
 
         if (promptInicio) {
             promptInicio.classList.add("escondido");
@@ -83,14 +80,21 @@ if (botaoMelhoriaPorSegundo && caixaMelhoriaPorSegundo) {
 }
 
 function comprarMelhoria() {
-    if (cliques >= 10) {
-        cliques -= 10;
-        contador.textContent = cliques;
+    if (totalCliques >= custoMelhoria) {
+        totalCliques -= custoMelhoria;
+
+        cliquesPorClique++;
+
+        custoMelhoria *= 2;
+
+        atualizarTela();
+
         alert("Melhoria comprada!");
     } else {
         alert("Você não tem cliques suficientes.");
     }
 }
+
 
 $(document).ready(function() {
     const $lojaPainel = $("#lojaPainel");
@@ -120,4 +124,49 @@ $(document).ready(function() {
             fecharLoja();
         }
     });
+});
+
+let totalCliques = 0;
+let cliquesPorClique = 1;
+let custoMelhoria = 150;
+
+let vidaMax = 15;
+let vidaAtual = vidaMax;
+
+function clicaNaMadeira() {
+    totalCliques += cliquesPorClique;
+    vidaAtual -= cliquesPorClique;
+
+    atualizarTela();
+
+    madeira2.style.opacity = Math.max(0, vidaAtual / vidaMax);
+
+    if (vidaAtual <= 0) {
+        madeira2.style.opacity = 0;
+
+        setTimeout(() => {
+            vidaMax += 10;
+            vidaAtual = vidaMax;
+            madeira2.style.opacity = 1;
+        }, 1000);
+    }
+}
+
+function atualizarTela() {
+    contador.innerText = `Cliques: ${totalCliques}`;
+}
+
+const personagem2 = document.getElementById('personagem');
+const madeira2 = document.getElementById('madeira');
+
+personagem2.addEventListener('click', () => {
+
+    clicaNaMadeira();
+
+    madeira2.classList.add('impacto');
+
+    setTimeout(() => {
+        madeira2.classList.remove('impacto');
+    }, 100);
+
 });

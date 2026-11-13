@@ -317,3 +317,10 @@ button:hover {
         bottom: 100px;
     }
 }
+#madeira {
+    transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.impacto{
+    transform: scale(0.95) rotate(2deg);
+}

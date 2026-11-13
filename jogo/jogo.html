@@ -30,27 +30,27 @@
                     <div id="caixa-melhoria" class="caixaa escondido">
                         <p><strong>Melhoria</strong></p>
                         <p>+1 por clique</p>
-                        <button type="button" onclick="comprarMelhoria()">Comprar (10 Cliques)</button>
+                        <button type="button" onclick="comprarMelhoria()">Comprar (150 Cliques)</button>
                     </div>
                     <button id="melhoriaSegundo" type="button">Melhoria de Clique por Segundo</button>
                      <div id="caixa-melhoria-por-segundo" class="caixaa escondido">
                         <p><strong>Melhoria por segundo</strong></p>
                         <p>+1 por clique</p>
-                        <button type="button" onclick="comprarMelhoria()">Comprar (10 Cliques)</button>
+                        <button type="button" onclick="comprarMelhoria()">Comprar (150 Cliques)</button>
                     </div>
                     <button id="loja" type="button">Loja</button>
                 </aside>
 
                 <main class="area-jogo">
                     <div class="contador">
-                        <p>Cliques: <span id="contadorCliques">0</span></p>
+                        <p><span id="contadorCliques">0</span></p>
                     </div>
                     <div id="promptInicio" class="prompt-inicio" role="status">Clique no Jerry para Começar</div>
                     <div class="personagem">
-                        <img src="assets/sprites/Default/JerryIdle.gif" alt="Jerry">
+                        <img id="personagem" src="assets/sprites/Default/JerryIdle.gif" alt="Jerry">
                     </div>
                     <div class="madeira" aria-label="Madeira">
-                        <img src="assets/sprites/Default/default_wood_idle.png" alt="Toco de madeira">
+                        <img id="madeira" src="assets/sprites/Default/default_wood_idle.png" alt="Toco de madeira">
                         <div class="particulas" aria-hidden="true"></div>
                     </div>
                 </main>
