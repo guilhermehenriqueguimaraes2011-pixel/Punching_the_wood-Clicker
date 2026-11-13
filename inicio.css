@@ -457,3 +457,16 @@ body.started #botaoVoltar {
         font-size: 9px;
     }
 }
+.erro {
+    margin: 0;
+    min-height: 12px;
+    color: #ff4d4d;
+    font-family: "Press Start 2P", monospace;
+    font-size: 9px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.erro:empty {
+    display: none;
+}

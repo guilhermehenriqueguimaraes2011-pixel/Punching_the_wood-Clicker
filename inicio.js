@@ -161,3 +161,56 @@ $(document).ready(function() {
     "sb_publishable_dPCcGEn70ozMH7gqL44zxQ_qvIMOpFa"
 );
 
+function entrarNoJogo(usuario, senha, dados) {
+    sessionStorage.setItem("jogador", usuario);
+    sessionStorage.setItem("senhaJogador", senha); 
+    sessionStorage.setItem("dadosJogador", JSON.stringify(dados));
+    window.location.href = "jogo/jogo.html";
+}
+
+
+$("#criar").on("click", async function() {
+    const usuario = $("#UsuarioCriar").val().trim().toLowerCase();
+    const senha = $("#SenhaCriar").val();
+    const $erro = $("#erroCriar");
+    $erro.text("");
+
+    try {
+        const { error } = await BancoDeDados.rpc("criar_conta", {
+            p_usuario: usuario,
+            p_senha: senha
+        });
+        if (error) throw error;
+
+        const { data, error: erroLogin } = await BancoDeDados.rpc("entrar", {
+            p_usuario: usuario,
+            p_senha: senha
+        });
+        if (erroLogin) throw erroLogin;
+
+        entrarNoJogo(usuario, senha, data);
+    } catch (e) {
+        console.error(e.message); 
+        $erro.text("Erro ao criar conta.");
+    }
+});
+
+$("#entrar").on("click", async function() {
+    const usuario = $("#UsuarioEntrar").val().trim().toLowerCase();
+    const senha = $("#SenhaEntrar").val();
+    const $erro = $("#erroEntrar");
+    $erro.text("");
+
+    try {
+        const { data, error } = await BancoDeDados.rpc("entrar", {
+            p_usuario: usuario,
+            p_senha: senha
+        });
+        if (error) throw error;
+
+        entrarNoJogo(usuario, senha, data);
+    } catch (e) {
+        console.error(e.message);
+        $erro.text("Erro ao entrar na conta.");
+    }
+});
