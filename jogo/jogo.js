@@ -85,8 +85,6 @@ function comprarMelhoria() {
 
         cliquesPorClique++;
 
-        custoMelhoria *= 2;
-
         atualizarTela();
 
         alert("Melhoria comprada!");
