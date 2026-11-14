@@ -305,6 +305,11 @@ button:hover {
     padding: 8px 10px;
 }
 
+.loja-item button:disabled {
+    cursor: default;
+    opacity: 0.6;
+}
+
 @media (max-width: 1245px) {
     .prompt-inicio {
         top: auto;
@@ -457,4 +462,114 @@ button:hover {
 
 .impacto{
     transform: scale(0.95) rotate(2deg);
+}
+
+.FOV.tema-sonic .personagem.sonic-idle {
+    left: 30%;
+}
+
+.FOV.tema-sonic .personagem.sonic-idle img {
+    transform: scale(0.47);
+    transform-origin: bottom left;
+}
+
+.FOV.tema-sonic .madeira img {
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    left: 27.5%;
+    width: 60%;
+    height: 60%;
+}
+
+.FOV.tema-sonic .madeira {
+    bottom: 10%;
+}
+
+.FOV.tema-mario .personagem {
+    left: calc(30% - 20px);
+}
+
+.FOV.tema-mario #madeira {
+    transform: scale(0.75);
+    transform-origin: bottom center;
+}
+
+.FOV.tema-mario #madeira.mario-idle {
+    transform: scale(-0.65, 0.65);
+}
+
+.FOV.tema-mario #madeira.impacto {
+    transform: translateY(70px) scale(0.6) rotate(2deg);
+}
+
+.FOV.tema-mario .madeira {
+    left: calc(30% + 210px);
+}
+
+.bola-de-fogo {
+    position: absolute;
+    z-index: 0;
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    pointer-events: none;
+    animation: bola-de-fogo-voando 450ms linear forwards;
+}
+
+@keyframes bola-de-fogo-voando {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(0.7);
+    }
+
+    75% {
+        opacity: 1;
+        transform: translate(var(--dx), var(--dy)) scale(1.1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy)) scale(0.4);
+    }
+}
+
+@media (max-width: 1245px) {
+    .FOV.tema-sonic .madeira {
+        bottom: 8%;
+    }
+
+    .FOV.tema-mario .personagem {
+        left: calc(30% - 20px);
+    }
+
+    .FOV.tema-mario .madeira {
+        left: calc(30% + 180px);
+    }
+}
+
+@media (max-width: 700px) {
+    .FOV.tema-sonic .personagem.sonic-idle {
+        left: calc(50% - 118px);
+    }
+
+    .FOV.tema-sonic .madeira {
+        left: calc(50% - 8px);
+        bottom: 12%;
+    }
+
+    .FOV.tema-sonic .madeira img {
+        left: 5%;
+        width: 75%;
+        height: 75%;
+    }
+
+    .FOV.tema-mario .personagem {
+        left: calc(50% - 148px);
+    }
+
+    .FOV.tema-mario .madeira {
+        left: calc(50% + 32px);
+    }
 }
