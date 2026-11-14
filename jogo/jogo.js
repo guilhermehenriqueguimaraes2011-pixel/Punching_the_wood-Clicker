@@ -10,6 +10,8 @@ const madeiraParada = 'assets/sprites/Default/default_wood_idle.png';
 const madeiraAcao = 'assets/sprites/Default/default_wood_action.png';
 let temporizador;
 let temporizadorMadeira;
+let temporizadorImpacto;
+let temporizadorReparo;
 let musicaIniciada = false;
 
 function soltarParticulas() {
@@ -53,11 +55,17 @@ if (personagem && contador) {
 
         if (madeira) {
             clearTimeout(temporizadorMadeira);
+            clearTimeout(temporizadorImpacto);
             madeira.src = `${madeiraAcao}?t=${Date.now()}`;
+            madeira.classList.add("impacto");
             soltarParticulas();
+            temporizadorImpacto = setTimeout(() => {
+                madeira.classList.remove("impacto");
+            }, 100);
             temporizadorMadeira = setTimeout(() => {
                 madeira.src = madeiraParada;
             }, 300);
+            clicaNaMadeira();
         }
     });
 }
@@ -133,19 +141,15 @@ let vidaAtual = vidaMax;
 
 function clicaNaMadeira() {
     totalCliques += cliquesPorClique;
-    vidaAtual -= cliquesPorClique;
+    vidaAtual = Math.max(0, vidaAtual - cliquesPorClique);
 
     atualizarTela();
 
-    madeira2.style.opacity = Math.max(0, vidaAtual / vidaMax);
-
-    if (vidaAtual <= 0) {
-        madeira2.style.opacity = 0;
-
-        setTimeout(() => {
+    if (vidaAtual === 0 && !temporizadorReparo) {
+        temporizadorReparo = setTimeout(() => {
             vidaMax += 10;
             vidaAtual = vidaMax;
-            madeira2.style.opacity = 1;
+            temporizadorReparo = undefined;
         }, 1000);
     }
 }
@@ -153,18 +157,3 @@ function clicaNaMadeira() {
 function atualizarTela() {
     contador.innerText = `Cliques: ${totalCliques}`;
 }
-
-const personagem2 = document.getElementById('personagem');
-const madeira2 = document.getElementById('madeira');
-
-personagem2.addEventListener('click', () => {
-
-    clicaNaMadeira();
-
-    madeira2.classList.add('impacto');
-
-    setTimeout(() => {
-        madeira2.classList.remove('impacto');
-    }, 100);
-
-});

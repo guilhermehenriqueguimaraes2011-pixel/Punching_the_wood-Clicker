@@ -41,7 +41,8 @@ body {
 }
 
 .container-principal {
-    display: flex;
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr);
     flex: 1;
 }
 
@@ -318,7 +319,7 @@ button:hover {
     }
 }
 #madeira {
-    transition: opacity 0.15s ease, transform 0.1s ease;
+    transition: transform 0.1s ease;
 }
 
 .impacto{
