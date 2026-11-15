@@ -6,6 +6,8 @@ let somSoco = document.querySelector("#somSoco");
 let promptInicio = document.querySelector("#promptInicio");
 let madeira = document.querySelector(".madeira img");
 let particulas = document.querySelector(".particulas");
+let notificacaoConquista = document.querySelector("#notificacaoConquista");
+
 const temas = {
     default: {
         personagemParado: "assets/sprites/Default/JerryIdle.gif",
@@ -329,6 +331,24 @@ function clicaNaMadeira() {
     vidaAtual = Math.max(0, vidaAtual - cliquesPorClique);
 
     atualizarTela();
+    if (totalCliques === 10) {
+    mostrarConquista("WOOD DESTROYER!", 10);
+}
+
+if (totalCliques === 30) {
+    mostrarConquista("FIRE FINGERS!", 30);
+}
+if (totalCliques === 100) {
+    mostrarConquista("CENTURY SMASH!", 100);
+}
+
+if (totalCliques === 300) {
+    mostrarConquista("WOOD ANNIHILATOR!", 300);
+}
+
+if (totalCliques === 1000) {
+    mostrarConquista("LEGENDARY PUNCH!", 1000);
+}
 
     if (vidaAtual === 0 && !temporizadorReparo) {
         temporizadorReparo = setTimeout(() => {
@@ -342,6 +362,15 @@ function clicaNaMadeira() {
 function atualizarTela() {
     contador.innerText = `Cliques: ${totalCliques}`;
     atualizarBotoesTemas();
+}
+function mostrarConquista(titulo, pontos) {
+    notificacaoConquista.innerHTML = titulo + "<br>+" + pontos;
+    notificacaoConquista.classList.add("boing");
+
+    setTimeout(function() {
+        notificacaoConquista.classList.remove("boing");
+        notificacaoConquista.innerHTML = "";
+    }, 1000);
 }
 
 atualizarBotoesTemas();
