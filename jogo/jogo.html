@@ -11,6 +11,9 @@
     <audio id="bgm" loop preload="auto">
         <source src="assets/musics/Clicker_Default_Variant.mp3" type="audio/mpeg">
     </audio>
+    <audio id="somSoco" preload="auto">
+    <source src="assets/musics/universfield-classic-punch-impact-352711.mp3" type="audio/mpeg">
+</audio>
 </head>
 <body>
     <div class="FOV">
@@ -71,6 +74,37 @@
             </div>
         </div>
     </div>
+<div class="configuracoes-painel" id="configuracoesPainel">
+
+    <div class="configuracoes-janela">
+
+        <div class="configuracoes-topo">
+            <h2>Configurações</h2>
+            <button id="fecharConfiguracoes" type="button">✕</button>
+        </div>
+
+        <div class="configuracoes-itens">
+
+            <div class="configuracoes-item1">
+                <label for="volumeGeral">Volume Geral</label>
+                <input type="range" id="volumeGeral" min="0" max="100" value="100">
+            </div>
+
+            <div class="configuracoes-item2">
+                <label for="volumeSFX">Efeitos Sonoros</label>
+                <input type="range" id="volumeSFX" min="0" max="100" value="100">
+            </div>
+
+            <div class="configuracoes-item3">
+                <label for="volumeMusica">Música</label>
+                <input type="range" id="volumeMusica" min="0" max="100" value="100">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>

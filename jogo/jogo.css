@@ -317,3 +317,86 @@ button:hover {
         bottom: 100px;
     }
 }
+
+/* PAINEL DE CONFIGURAÇÕES */
+
+.configuracoes-painel {
+    position: fixed;
+    inset: 0;
+    display: none;
+    justify-content: flex-end;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 10;
+}
+
+.configuracoes-painel.aberta {
+    display: flex;
+}
+
+.configuracoes-janela {
+    width: 380px;
+    max-width: 85%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 25px;
+    background: #0f1d1a;
+    border-left: 3px solid #72D6A0;
+    box-shadow: -4px 0 0 #153D32;
+    color: #A5E8AC;
+}
+
+.configuracoes-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.configuracoes-topo h2 {
+    font-size: 22px;
+    font-family: 'Press Start 2P', cursive;
+    color: #A5E8AC;
+}
+
+#fecharConfiguracoes {
+    background: #153D32;
+    color: #A5E8AC;
+    border: 2px solid #72D6A0;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+#fecharConfiguracoes:hover {
+    background: #286B50;
+}
+
+.configuracoes-itens {
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+}
+
+.configuracoes-item1,
+.configuracoes-item2,
+.configuracoes-item3 {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.configuracoes-item1 label,
+.configuracoes-item2 label,
+.configuracoes-item3 label {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 11px;
+    color: #A5E8AC;
+}
+
+.configuracoes-item1 input,
+.configuracoes-item2 input,
+.configuracoes-item3 input {
+    width: 100%;
+    accent-color: #72D6A0;
+    cursor: pointer;
+}

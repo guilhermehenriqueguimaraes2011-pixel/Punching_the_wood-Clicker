@@ -2,6 +2,7 @@ let cliques = 0;
 let contador = document.querySelector("#contadorCliques");
 let personagem = document.querySelector(".personagem img");
 let musica = document.querySelector("#bgm");
+let somSoco = document.querySelector("#somSoco");
 let promptInicio = document.querySelector("#promptInicio");
 let madeira = document.querySelector(".madeira img");
 let particulas = document.querySelector(".particulas");
@@ -33,6 +34,11 @@ if (personagem && contador) {
     personagem.addEventListener("click", function() {
         cliques++;
         contador.textContent = cliques;
+
+        if (somSoco) {
+        somSoco.currentTime = 0;
+        somSoco.play();
+        }
 
         if (promptInicio) {
             promptInicio.classList.add("escondido");
@@ -96,6 +102,22 @@ $(document).ready(function() {
     const $lojaPainel = $("#lojaPainel");
     const $loja = $("#loja");
     const $fecharLoja = $("#fecharLoja");
+   
+    const $configuracoesPainel = $("#configuracoesPainel");
+    const $configuracoes = $("#configuracoes");
+    const $fecharConfiguracoes = $("#fecharConfiguracoes");
+    const $volumeGeral = $("#volumeGeral");
+    const $volumeMusica = $("#volumeMusica");
+    const $volumeSFX = $("#volumeSFX");
+    let volumeMusica = 1;
+    let volumeSFX = 1;
+
+    function atualizarVolumeMusica() {
+    musica.volume = ($volumeGeral.val() / 100) * volumeMusica;
+}
+function atualizarVolumeSFX() {
+    somSoco.volume = ($volumeGeral.val() / 100) * volumeSFX;
+}
 
     function abrirLoja() {
         $(".FOV").addClass("modo-fov");
@@ -118,6 +140,33 @@ $(document).ready(function() {
     $(document).on("keydown", function(event) {
         if (event.key === "Escape") {
             fecharLoja();
+            fecharConfiguracoes();
         }
     });
+    function abrirConfiguracoes() {
+    $configuracoesPainel.addClass("aberta");
+}
+$configuracoes.on("click", abrirConfiguracoes);
+function fecharConfiguracoes() {
+    $configuracoesPainel.removeClass("aberta");
+}
+$fecharConfiguracoes.on("click", fecharConfiguracoes);
+$configuracoesPainel.on("click", function(event) {
+    if (event.target === this) {
+        fecharConfiguracoes();
+    }
+});
+$volumeGeral.on("input", function() {
+atualizarVolumeMusica();
+    atualizarVolumeSFX();
+
+});
+$volumeMusica.on("input", function() {
+    volumeMusica = this.value / 100;
+atualizarVolumeMusica();
+});
+$volumeSFX.on("input", function() {
+    volumeSFX = this.value / 100;
+    atualizarVolumeSFX();
+});
 });
