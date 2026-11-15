@@ -33,27 +33,27 @@
                     <div id="caixa-melhoria" class="caixaa escondido">
                         <p><strong>Melhoria</strong></p>
                         <p>+1 por clique</p>
-                        <button type="button" onclick="comprarMelhoria()">Comprar (10 Cliques)</button>
+                        <button type="button" onclick="comprarMelhoria()">Comprar (150 Cliques)</button>
                     </div>
                     <button id="melhoriaSegundo" type="button">Melhoria de Clique por Segundo</button>
                      <div id="caixa-melhoria-por-segundo" class="caixaa escondido">
                         <p><strong>Melhoria por segundo</strong></p>
                         <p>+1 por clique</p>
-                        <button type="button" onclick="comprarMelhoria()">Comprar (10 Cliques)</button>
+                        <button type="button" onclick="comprarMelhoria()">Comprar (150 Cliques)</button>
                     </div>
                     <button id="loja" type="button">Loja</button>
                 </aside>
 
                 <main class="area-jogo">
                     <div class="contador">
-                        <p>Cliques: <span id="contadorCliques">0</span></p>
+                        <p><span id="contadorCliques">0</span></p>
                     </div>
                     <div id="promptInicio" class="prompt-inicio" role="status">Clique no Jerry para Começar</div>
                     <div class="personagem">
-                        <img src="assets/sprites/Default/JerryIdle.gif" alt="Jerry">
+                        <img id="personagem" src="assets/sprites/Default/JerryIdle.gif" alt="Jerry">
                     </div>
                     <div class="madeira" aria-label="Madeira">
-                        <img src="assets/sprites/Default/default_wood_idle.png" alt="Toco de madeira">
+                        <img id="madeira" src="assets/sprites/Default/default_wood_idle.png" alt="Toco de madeira">
                         <div class="particulas" aria-hidden="true"></div>
                     </div>
                 </main>
@@ -68,9 +68,9 @@
                 <button id="fecharLoja" type="button">✕</button>
             </div>
             <div class="loja-itens">
-                <div class="loja-item"><span>+1 clique</span><button type="button">Comprar</button></div>
-                <div class="loja-item"><span>+5 por clique</span><button type="button">Comprar</button></div>
-                <div class="loja-item"><span>+10 por segundo</span><button type="button">Comprar</button></div>
+                <div class="loja-item"><span>Tema padrão</span><button type="button" data-theme="default">Usar tema</button></div>
+                <div class="loja-item"><span>Tema Sonic — 50 cliques</span><button type="button" data-theme="sonic">Comprar</button></div>
+                <div class="loja-item"><span>Tema Mario — 50 cliques</span><button type="button" data-theme="mario">Comprar</button></div>
             </div>
         </div>
     </div>
