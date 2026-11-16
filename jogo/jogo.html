@@ -62,7 +62,7 @@
                 
                 <main class="area-jogo">
                     <div class="contador">
-                        <p><span id="contadorCliques">0</span></p>
+                        <p><span id="contadorCliques">Saldo: 0</span></p>
                     </div>
                     <div class="notificacao-conquista" id="notificacaoConquista"></div>
                     <div id="promptInicio" class="prompt-inicio" role="status">Clique no Jerry para Começar</div>
@@ -90,6 +90,23 @@
                 <div class="loja-item"><span>Tema Mario — 50 cliques</span><button type="button" data-theme="mario">Comprar</button></div>
             </div>
         </div>
+    </div>
+    <div class="ranking-painel" id="rankingPainel">
+        <section class="ranking-janela" role="dialog" aria-modal="true" aria-labelledby="tituloRanking">
+            <div class="ranking-topo">
+                <div>
+                    <h2 id="tituloRanking">Ranking Global</h2>
+                    <p>Saldo atual e recorde histórico</p>
+                </div>
+                <button id="fecharRanking" type="button" aria-label="Fechar ranking">✕</button>
+            </div>
+            <ol class="ranking-lista" id="rankingLista"></ol>
+            <p class="ranking-status" id="rankingStatus" role="status"></p>
+            <div class="ranking-rodape">
+                <span>Top 10 jogadores</span>
+                <button id="atualizarRanking" type="button">Atualizar</button>
+            </div>
+        </section>
     </div>
     <div class="configuracoes-painel" id="configuracoesPainel">
         

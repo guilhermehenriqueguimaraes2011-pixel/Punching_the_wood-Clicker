@@ -286,6 +286,10 @@ $(document).ready(function() {
     const $lojaPainel = $("#lojaPainel");
     const $loja = $("#loja");
     const $fecharLoja = $("#fecharLoja");
+    const $rankingPainel = $("#rankingPainel");
+    const $ranking = $("#ranking");
+    const $fecharRanking = $("#fecharRanking");
+    const $atualizarRanking = $("#atualizarRanking");
    
     const $configuracoesPainel = $("#configuracoesPainel");
     const $configuracoes = $("#configuracoes");
@@ -313,6 +317,77 @@ function atualizarVolumeSFX() {
         $lojaPainel.removeClass("aberta");
     }
 
+    async function carregarRanking() {
+        const lista = document.getElementById("rankingLista");
+        const status = document.getElementById("rankingStatus");
+        lista.replaceChildren();
+        status.textContent = "Carregando ranking...";
+        $atualizarRanking.prop("disabled", true);
+
+        try {
+            const { data, error } = await BancoDeDados.rpc("ranking");
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                status.textContent = "Ainda não há jogadores no ranking.";
+                return;
+            }
+
+            const usuarioAtual = String(jogador || "").toLowerCase();
+            data.forEach((item, indice) => {
+                const linha = document.createElement("li");
+                const posicao = document.createElement("span");
+                const nome = document.createElement("span");
+                const valores = document.createElement("div");
+                const saldo = document.createElement("span");
+                const recorde = document.createElement("span");
+                const nomeJogador = String(item.usuario || "Jogador");
+                const pontos = Number(item.score);
+                const pontosMaximos = Math.max(
+                    Number(item.score_maximo) || 0,
+                    Number(item.scoreMaximo) || 0,
+                    Number.isFinite(pontos) ? pontos : 0
+                );
+
+                linha.className = "ranking-item";
+                if (usuarioAtual && nomeJogador.toLowerCase() === usuarioAtual) {
+                    linha.classList.add("jogador-atual");
+                }
+                posicao.className = "ranking-posicao";
+                posicao.textContent = indice + 1;
+                nome.className = "ranking-nome";
+                nome.textContent = nomeJogador;
+                valores.className = "ranking-valores";
+                saldo.className = "ranking-saldo";
+                saldo.textContent = `Saldo: ${Number.isFinite(pontos) ? pontos.toLocaleString("pt-BR") : 0}`;
+                recorde.className = "ranking-recorde";
+                recorde.textContent = `Recorde: ${pontosMaximos.toLocaleString("pt-BR")}`;
+                valores.append(saldo, recorde);
+                linha.append(posicao, nome, valores);
+                lista.appendChild(linha);
+            });
+
+            status.textContent = "";
+        } catch (erro) {
+            console.error("Erro ao carregar ranking:", erro.message || erro);
+            status.textContent = "Não foi possível carregar o ranking. Verifique a conexão e as permissões do banco.";
+        } finally {
+            $atualizarRanking.prop("disabled", false);
+        }
+    }
+
+    function abrirRanking() {
+        $(".FOV").addClass("modo-fov");
+        $rankingPainel.addClass("aberta");
+        carregarRanking();
+    }
+
+    function fecharRanking() {
+        $(".FOV").removeClass("modo-fov");
+        $rankingPainel.removeClass("aberta");
+    }
+
     $loja.on("click", abrirLoja);
     $fecharLoja.on("click", fecharLoja);
     $lojaPainel.on("click", function(event) {
@@ -320,10 +395,19 @@ function atualizarVolumeSFX() {
             fecharLoja();
         }
     });
+    $ranking.on("click", abrirRanking);
+    $fecharRanking.on("click", fecharRanking);
+    $atualizarRanking.on("click", carregarRanking);
+    $rankingPainel.on("click", function(event) {
+        if (event.target === this) {
+            fecharRanking();
+        }
+    });
 
     $(document).on("keydown", function(event) {
         if (event.key === "Escape") {
             fecharLoja();
+            fecharRanking();
             fecharConfiguracoes();
         }
     });
@@ -356,6 +440,7 @@ $volumeSFX.on("input", function() {
 });
 
 let totalCliques = 0;
+let scoreMaximo = 0;
 let cliquesPorClique = 1;
 let custoMelhoria = 150;
 let nivelMelhoriaClique = 0;
@@ -367,6 +452,13 @@ const melhoriasSalvas = dadosJogador && dadosJogador.upgrades &&
     typeof dadosJogador.upgrades === "object" && !Array.isArray(dadosJogador.upgrades)
     ? dadosJogador.upgrades.punchingTheWood || {}
     : {};
+const scoreMaximoSalvo = Math.max(
+    Number(dadosJogador && dadosJogador.score_maximo) || 0,
+    Number(dadosJogador && dadosJogador.scoreMaximo) || 0,
+    Number(dadosJogador && dadosJogador["Score maximo"]) || 0,
+    Number(melhoriasSalvas.scoreMaximo) || 0
+);
+scoreMaximo = scoreMaximoSalvo;
 
 function calcularCustoMelhoria(base, multiplicador, nivel) {
     let custo = base;
@@ -403,9 +495,17 @@ function atualizarMelhoriasSalvas() {
             clickLevel: nivelMelhoriaClique,
             clickCost: custoMelhoria,
             perSecondLevel: nivelMelhoriaSegundo,
-            perSecondCost: custoMelhoriaSegundo
+            perSecondCost: custoMelhoriaSegundo,
+            scoreMaximo: scoreMaximo
         }
     };
+}
+
+function atualizarScoreMaximo() {
+    if (totalCliques > scoreMaximo) {
+        scoreMaximo = totalCliques;
+        atualizarMelhoriasSalvas();
+    }
 }
 
 function calcularCustoLote(custo, multiplicador, quantidade) {
@@ -486,6 +586,7 @@ let vidaAtual = vidaMax;
 
 function clicaNaMadeira() {
     totalCliques += cliquesPorClique;
+    atualizarScoreMaximo();
     vidaAtual = Math.max(0, vidaAtual - cliquesPorClique);
 
     atualizarTela();
@@ -518,7 +619,7 @@ if (totalCliques === 1000) {
 }
 
 function atualizarTela() {
-    contador.innerText = `Cliques: ${totalCliques}`;
+    contador.innerText = `Saldo: ${totalCliques}`;
     atualizarBotoesTemas();
     atualizarBotoesMelhoria();
 }
@@ -536,6 +637,8 @@ atualizarBotoesTemas();
 
 if (dadosJogador) {
     totalCliques = Number(dadosJogador.score) || 0;
+    atualizarScoreMaximo();
+    atualizarMelhoriasSalvas();
     atualizarTela();
 
     if (totalCliques > 0 && promptInicio) {
@@ -555,12 +658,14 @@ setInterval(function() {
         if (novosCliques > 0) {
             cliquesAutomaticosPendentes -= novosCliques;
             totalCliques += novosCliques;
+            atualizarScoreMaximo();
             atualizarTela();
         }
     }
 }, 1000);
 
 let ultimoSalvo = totalCliques;
+let ultimoScoreMaximoSalvo = Number(melhoriasSalvas.scoreMaximo) || 0;
 let salvando = false;
 let temporizadorSalvar;
 
@@ -571,7 +676,7 @@ async function salvarProgresso() {
         temporizadorSalvar = setTimeout(salvarProgresso, 500);
         return;
     }
-    if (totalCliques === ultimoSalvo) return;
+    if (totalCliques === ultimoSalvo && scoreMaximo === ultimoScoreMaximoSalvo) return;
 
     salvando = true;
     const valor = totalCliques;
@@ -581,14 +686,13 @@ async function salvarProgresso() {
             p_usuario: jogador,
             p_senha: senhaJogador,
             p_score: valor,
-            p_moedas: dadosJogador.moedas,
             p_inventario: dadosJogador.inventario,
-            p_upgrades: dadosJogador.upgrades,
-            p_progresso: dadosJogador.progresso
+            p_upgrades: dadosJogador.upgrades
         });
         if (error) throw error;
 
         ultimoSalvo = valor;
+        ultimoScoreMaximoSalvo = scoreMaximo;
         dadosJogador.score = valor;
         sessionStorage.setItem("dadosJogador", JSON.stringify(dadosJogador));
     } catch (e) {
@@ -607,7 +711,7 @@ setInterval(salvarProgresso, 5000);
 
 function salvarAoSair() {
     if (!jogador || !senhaJogador || !dadosJogador) return;
-    if (totalCliques === ultimoSalvo) return;
+    if (totalCliques === ultimoSalvo && scoreMaximo === ultimoScoreMaximoSalvo) return;
 
     fetch(`${SUPABASE_URL}/rest/v1/rpc/salvar`, {
         method: "POST",
@@ -620,14 +724,13 @@ function salvarAoSair() {
             p_usuario: jogador,
             p_senha: senhaJogador,
             p_score: totalCliques,
-            p_moedas: dadosJogador.moedas,
             p_inventario: dadosJogador.inventario,
-            p_upgrades: dadosJogador.upgrades,
-            p_progresso: dadosJogador.progresso
+            p_upgrades: dadosJogador.upgrades
         })
     });
 
     ultimoSalvo = totalCliques;
+    ultimoScoreMaximoSalvo = scoreMaximo;
     dadosJogador.score = totalCliques;
     sessionStorage.setItem("dadosJogador", JSON.stringify(dadosJogador));
 }

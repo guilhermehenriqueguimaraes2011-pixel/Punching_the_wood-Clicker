@@ -310,6 +310,172 @@ button:hover {
     opacity: 0.6;
 }
 
+.ranking-painel {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.72);
+}
+
+.ranking-painel.aberta {
+    display: flex;
+}
+
+.ranking-janela {
+    width: min(520px, 90vw);
+    max-height: 82vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 22px;
+    color: #dfffe6;
+    background: #0f1d1a;
+    border: 2px solid #72D6A0;
+    border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 22px rgba(114, 214, 160, 0.12);
+    animation: rankingEntrada 0.28s ease-out;
+}
+
+.ranking-topo,
+.ranking-rodape {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.ranking-topo {
+    margin-bottom: 18px;
+}
+
+.ranking-topo h2 {
+    margin: 0;
+    color: #A5E8AC;
+    font-size: clamp(16px, 4vw, 22px);
+}
+
+.ranking-topo p {
+    margin: 9px 0 0;
+    color: #a4b9ad;
+    font: 12px sans-serif;
+}
+
+#fecharRanking {
+    padding: 6px 9px;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+.ranking-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(114, 214, 160, 0.24);
+    border-radius: 9px;
+    font: 14px sans-serif;
+}
+
+.ranking-valores {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 90px;
+    text-align: right;
+    font-size: 11px;
+}
+
+.ranking-saldo {
+    color: #A5E8AC;
+    font-weight: bold;
+}
+
+.ranking-recorde {
+    color: #a4b9ad;
+}
+
+.ranking-item.jogador-atual {
+    background: rgba(114, 214, 160, 0.14);
+    border-color: #72D6A0;
+}
+
+.ranking-posicao {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    place-items: center;
+    color: #A5E8AC;
+    background: #153D32;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+.ranking-nome {
+    overflow: hidden;
+    flex: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ranking-score {
+    color: #A5E8AC;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.ranking-status {
+    min-height: 18px;
+    margin: 14px 0;
+    color: #a4b9ad;
+    font: 12px sans-serif;
+    text-align: center;
+}
+
+.ranking-rodape {
+    padding-top: 12px;
+    border-top: 1px solid rgba(114, 214, 160, 0.2);
+    color: #a4b9ad;
+    font: 11px sans-serif;
+}
+
+.ranking-rodape button {
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+}
+
+.ranking-rodape button:disabled {
+    cursor: wait;
+    opacity: 0.6;
+}
+
+@keyframes rankingEntrada {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 @media (max-width: 1245px) {
     .prompt-inicio {
         top: auto;
