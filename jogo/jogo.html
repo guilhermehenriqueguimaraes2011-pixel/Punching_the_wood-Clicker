@@ -33,13 +33,29 @@
                     <div id="caixa-melhoria" class="caixaa escondido">
                         <p><strong>Melhoria</strong></p>
                         <p>+1 por clique</p>
-                        <button type="button" onclick="comprarMelhoria()">Comprar (150 Cliques)</button>
+                        <p id="nivelMelhoriaClique"></p>
+                        <label for="quantidadeMelhoriaClique">Quantidade:</label>
+                        <select id="quantidadeMelhoriaClique">
+                            <option value="1">1</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                        <button id="comprarMelhoriaClique" type="button">Comprar (150 Cliques)</button>
                     </div>
                     <button id="melhoriaSegundo" type="button">Melhoria de Clique por Segundo</button>
                     <div id="caixa-melhoria-por-segundo" class="caixaa escondido">
                         <p><strong>Melhoria por segundo</strong></p>
-                        <p>+1 por clique</p>
-                        <button type="button" onclick="comprarMelhoria()">Comprar (150 Cliques)</button>
+                        <p>+0,5 cliques por segundo</p>
+                        <p id="nivelMelhoriaSegundo"></p>
+                        <label for="quantidadeMelhoriaSegundo">Quantidade:</label>
+                        <select id="quantidadeMelhoriaSegundo">
+                            <option value="1">1</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                        <button id="comprarMelhoriaSegundo" type="button">Comprar (150 Cliques)</button>
                     </div>
                     <button id="loja" type="button">Loja</button>
                 </aside>

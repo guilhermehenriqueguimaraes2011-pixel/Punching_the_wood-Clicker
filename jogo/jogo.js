@@ -188,20 +188,6 @@ if (botaoMelhoriaPorSegundo && caixaMelhoriaPorSegundo) {
     });
 }
 
-function comprarMelhoria() {
-    if (totalCliques >= custoMelhoria) {
-        totalCliques -= custoMelhoria;
-
-        cliquesPorClique++;
-
-        atualizarTela();
-
-        alert("Melhoria comprada!");
-    } else {
-        alert("Você não tem cliques suficientes.");
-    }
-}
-
 function atualizarBotoesTemas() {
     document.querySelectorAll("[data-theme]").forEach((botao) => {
         const tema = botao.dataset.theme;
@@ -335,6 +321,128 @@ $volumeSFX.on("input", function() {
 let totalCliques = 0;
 let cliquesPorClique = 1;
 let custoMelhoria = 150;
+let nivelMelhoriaClique = 0;
+let cliquesPorSegundo = 0;
+let nivelMelhoriaSegundo = 0;
+let custoMelhoriaSegundo = 150;
+
+const melhoriasSalvas = dadosJogador && dadosJogador.upgrades &&
+    typeof dadosJogador.upgrades === "object" && !Array.isArray(dadosJogador.upgrades)
+    ? dadosJogador.upgrades.punchingTheWood || {}
+    : {};
+
+function calcularCustoMelhoria(base, multiplicador, nivel) {
+    let custo = base;
+
+    for (let i = 0; i < nivel; i++) {
+        custo = Math.ceil(custo * multiplicador);
+    }
+
+    return custo;
+}
+
+nivelMelhoriaClique = Math.max(0, Math.floor(Number(melhoriasSalvas.clickLevel) || 0));
+nivelMelhoriaSegundo = Math.max(0, Math.floor(Number(melhoriasSalvas.perSecondLevel) || 0));
+cliquesPorClique += nivelMelhoriaClique;
+cliquesPorSegundo = nivelMelhoriaSegundo * 0.5;
+custoMelhoria = Number(melhoriasSalvas.clickCost) > 0
+    ? Number(melhoriasSalvas.clickCost)
+    : calcularCustoMelhoria(150, 1.4, nivelMelhoriaClique);
+custoMelhoriaSegundo = Number(melhoriasSalvas.perSecondCost) > 0
+    ? Number(melhoriasSalvas.perSecondCost)
+    : calcularCustoMelhoria(150, 1.6, nivelMelhoriaSegundo);
+
+function atualizarMelhoriasSalvas() {
+    if (!dadosJogador) return;
+
+    const upgrades = dadosJogador && dadosJogador.upgrades &&
+        typeof dadosJogador.upgrades === "object" && !Array.isArray(dadosJogador.upgrades)
+        ? dadosJogador.upgrades
+        : {};
+
+    dadosJogador.upgrades = {
+        ...upgrades,
+        punchingTheWood: {
+            clickLevel: nivelMelhoriaClique,
+            clickCost: custoMelhoria,
+            perSecondLevel: nivelMelhoriaSegundo,
+            perSecondCost: custoMelhoriaSegundo
+        }
+    };
+}
+
+function calcularCustoLote(custo, multiplicador, quantidade) {
+    let custoTotal = 0;
+    let proximoCusto = custo;
+
+    for (let i = 0; i < quantidade; i++) {
+        custoTotal += proximoCusto;
+        proximoCusto = Math.ceil(proximoCusto * multiplicador);
+    }
+
+    return { custoTotal, proximoCusto };
+}
+
+function atualizarBotoesMelhoria() {
+    const quantidadeClique = Number(document.getElementById("quantidadeMelhoriaClique").value);
+    const quantidadeSegundo = Number(document.getElementById("quantidadeMelhoriaSegundo").value);
+    const loteClique = calcularCustoLote(custoMelhoria, 1.4, quantidadeClique);
+    const loteSegundo = calcularCustoLote(custoMelhoriaSegundo, 1.6, quantidadeSegundo);
+    const botaoClique = document.getElementById("comprarMelhoriaClique");
+    const botaoSegundo = document.getElementById("comprarMelhoriaSegundo");
+
+    document.getElementById("nivelMelhoriaClique").textContent =
+        `Nível: ${nivelMelhoriaClique} | Próximo custo: ${custoMelhoria} cliques`;
+    document.getElementById("nivelMelhoriaSegundo").textContent =
+        `Nível: ${nivelMelhoriaSegundo} | Próximo custo: ${custoMelhoriaSegundo} cliques`;
+    botaoClique.textContent = `Comprar (${loteClique.custoTotal} Cliques)`;
+    botaoSegundo.textContent = `Comprar (${loteSegundo.custoTotal} Cliques)`;
+    botaoClique.disabled = totalCliques < loteClique.custoTotal;
+    botaoSegundo.disabled = totalCliques < loteSegundo.custoTotal;
+}
+
+function comprarMelhoria() {
+    const quantidade = Number(document.getElementById("quantidadeMelhoriaClique").value);
+    const lote = calcularCustoLote(custoMelhoria, 1.4, quantidade);
+
+    if (totalCliques < lote.custoTotal) {
+        alert("Você não tem cliques suficientes.");
+        return;
+    }
+
+    totalCliques -= lote.custoTotal;
+    nivelMelhoriaClique += quantidade;
+    cliquesPorClique += quantidade;
+    custoMelhoria = lote.proximoCusto;
+    atualizarMelhoriasSalvas();
+    atualizarTela();
+    atualizarBotoesMelhoria();
+    salvarProgresso();
+}
+
+function comprarMelhoriaPorSegundo() {
+    const quantidade = Number(document.getElementById("quantidadeMelhoriaSegundo").value);
+    const lote = calcularCustoLote(custoMelhoriaSegundo, 1.6, quantidade);
+
+    if (totalCliques < lote.custoTotal) {
+        alert("Você não tem cliques suficientes.");
+        return;
+    }
+
+    totalCliques -= lote.custoTotal;
+    nivelMelhoriaSegundo += quantidade;
+    cliquesPorSegundo += quantidade * 0.5;
+    custoMelhoriaSegundo = lote.proximoCusto;
+    atualizarMelhoriasSalvas();
+    atualizarTela();
+    atualizarBotoesMelhoria();
+    salvarProgresso();
+}
+
+document.getElementById("comprarMelhoriaClique").addEventListener("click", comprarMelhoria);
+document.getElementById("comprarMelhoriaSegundo").addEventListener("click", comprarMelhoriaPorSegundo);
+document.getElementById("quantidadeMelhoriaClique").addEventListener("change", atualizarBotoesMelhoria);
+document.getElementById("quantidadeMelhoriaSegundo").addEventListener("change", atualizarBotoesMelhoria);
 
 let vidaMax = 15;
 let vidaAtual = vidaMax;
@@ -375,6 +483,7 @@ if (totalCliques === 1000) {
 function atualizarTela() {
     contador.innerText = `Cliques: ${totalCliques}`;
     atualizarBotoesTemas();
+    atualizarBotoesMelhoria();
 }
 function mostrarConquista(titulo, pontos) {
     notificacaoConquista.innerHTML = titulo + "<br>+" + pontos;
@@ -396,6 +505,23 @@ if (dadosJogador) {
         promptInicio.classList.add("escondido");
     }
 }
+
+atualizarBotoesMelhoria();
+
+let cliquesAutomaticosPendentes = 0;
+
+setInterval(function() {
+    if (cliquesPorSegundo > 0) {
+        cliquesAutomaticosPendentes += cliquesPorSegundo;
+        const novosCliques = Math.floor(cliquesAutomaticosPendentes);
+
+        if (novosCliques > 0) {
+            cliquesAutomaticosPendentes -= novosCliques;
+            totalCliques += novosCliques;
+            atualizarTela();
+        }
+    }
+}, 1000);
 
 let ultimoSalvo = totalCliques;
 let salvando = false;
