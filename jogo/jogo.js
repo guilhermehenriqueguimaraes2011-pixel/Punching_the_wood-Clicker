@@ -1,3 +1,16 @@
+const jogador = sessionStorage.getItem("jogador");
+const senhaJogador = sessionStorage.getItem("senhaJogador");
+let dadosJogador = null;
+try {
+    dadosJogador = JSON.parse(sessionStorage.getItem("dadosJogador"));
+} catch (e) {
+    dadosJogador = null;
+}
+
+const SUPABASE_URL = "https://zeaaeiiwftctedrumuzp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_dPCcGEn70ozMH7gqL44zxQ_qvIMOpFa";
+const BancoDeDados = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 let contador = document.querySelector("#contadorCliques");
 let personagem = document.querySelector(".personagem img");
 let areaPersonagem = document.querySelector(".personagem");
@@ -374,3 +387,96 @@ function mostrarConquista(titulo, pontos) {
 }
 
 atualizarBotoesTemas();
+
+if (dadosJogador) {
+    totalCliques = Number(dadosJogador.score) || 0;
+    atualizarTela();
+
+    if (totalCliques > 0 && promptInicio) {
+        promptInicio.classList.add("escondido");
+    }
+}
+
+let ultimoSalvo = totalCliques;
+let salvando = false;
+let temporizadorSalvar;
+
+async function salvarProgresso() {
+    if (!jogador || !senhaJogador || !dadosJogador) return;
+    if (salvando) {
+        clearTimeout(temporizadorSalvar);
+        temporizadorSalvar = setTimeout(salvarProgresso, 500);
+        return;
+    }
+    if (totalCliques === ultimoSalvo) return;
+
+    salvando = true;
+    const valor = totalCliques;
+
+    try {
+        const { error } = await BancoDeDados.rpc("salvar", {
+            p_usuario: jogador,
+            p_senha: senhaJogador,
+            p_score: valor,
+            p_moedas: dadosJogador.moedas,
+            p_inventario: dadosJogador.inventario,
+            p_upgrades: dadosJogador.upgrades,
+            p_progresso: dadosJogador.progresso
+        });
+        if (error) throw error;
+
+        ultimoSalvo = valor;
+        dadosJogador.score = valor;
+        sessionStorage.setItem("dadosJogador", JSON.stringify(dadosJogador));
+    } catch (e) {
+        console.error("Erro ao salvar:", e.message);
+    }
+
+    salvando = false;
+}
+
+new MutationObserver(function() {
+    clearTimeout(temporizadorSalvar);
+    temporizadorSalvar = setTimeout(salvarProgresso, 1000);
+}).observe(contador, { childList: true, characterData: true, subtree: true });
+
+setInterval(salvarProgresso, 5000);
+
+function salvarAoSair() {
+    if (!jogador || !senhaJogador || !dadosJogador) return;
+    if (totalCliques === ultimoSalvo) return;
+
+    fetch(`${SUPABASE_URL}/rest/v1/rpc/salvar`, {
+        method: "POST",
+        keepalive: true,
+        headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPABASE_KEY
+        },
+        body: JSON.stringify({
+            p_usuario: jogador,
+            p_senha: senhaJogador,
+            p_score: totalCliques,
+            p_moedas: dadosJogador.moedas,
+            p_inventario: dadosJogador.inventario,
+            p_upgrades: dadosJogador.upgrades,
+            p_progresso: dadosJogador.progresso
+        })
+    });
+
+    ultimoSalvo = totalCliques;
+    dadosJogador.score = totalCliques;
+    sessionStorage.setItem("dadosJogador", JSON.stringify(dadosJogador));
+}
+
+document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === "hidden") salvarAoSair();
+});
+window.addEventListener("pagehide", salvarAoSair);
+
+const nickJogador = document.querySelector("#nickJogador");
+
+if (nickJogador) {
+    nickJogador.textContent = (jogador || "Visitante");
+    nickJogador.classList.remove("escondido");
+}

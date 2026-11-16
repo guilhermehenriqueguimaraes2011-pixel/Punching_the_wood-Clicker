@@ -20,13 +20,13 @@
         <div class="fundo">
             <header class="cabecalho">
                 <h1 class="titulo">Punching The Wood!</h1>
-
+                
                 <nav class="botoes-superiores">
                     <button id="configuracoes" type="button">Configurações</button>
                     <button id="ranking" type="button">Ranking Global</button>
                 </nav>
             </header>
-
+            
             <div class="container-principal">
                 <aside class="menu-lateral">
                     <button id="melhoriaClique" type="button">Melhoria de Clique</button>
@@ -36,14 +36,14 @@
                         <button type="button" onclick="comprarMelhoria()">Comprar (150 Cliques)</button>
                     </div>
                     <button id="melhoriaSegundo" type="button">Melhoria de Clique por Segundo</button>
-                     <div id="caixa-melhoria-por-segundo" class="caixaa escondido">
+                    <div id="caixa-melhoria-por-segundo" class="caixaa escondido">
                         <p><strong>Melhoria por segundo</strong></p>
                         <p>+1 por clique</p>
                         <button type="button" onclick="comprarMelhoria()">Comprar (150 Cliques)</button>
                     </div>
                     <button id="loja" type="button">Loja</button>
                 </aside>
-
+                
                 <main class="area-jogo">
                     <div class="contador">
                         <p><span id="contadorCliques">0</span></p>
@@ -61,7 +61,7 @@
             </div>
         </div>
     </div>
-
+    
     <div class="loja" id="lojaPainel">
         <div class="loja-janela">
             <div class="loja-topo">
@@ -75,38 +75,39 @@
             </div>
         </div>
     </div>
-<div class="configuracoes-painel" id="configuracoesPainel">
-
-    <div class="configuracoes-janela">
-
-        <div class="configuracoes-topo">
-            <h2>Configurações</h2>
-            <button id="fecharConfiguracoes" type="button">✕</button>
+    <div class="configuracoes-painel" id="configuracoesPainel">
+        
+        <div class="configuracoes-janela">
+            
+            <div class="configuracoes-topo">
+                <h2>Configurações</h2>
+                <button id="fecharConfiguracoes" type="button">✕</button>
+            </div>
+            
+            <div class="configuracoes-itens">
+                
+                <div class="configuracoes-item1">
+                    <label for="volumeGeral">Volume Geral</label>
+                    <input type="range" id="volumeGeral" min="0" max="100" value="100">
+                </div>
+                
+                <div class="configuracoes-item2">
+                    <label for="volumeSFX">Efeitos Sonoros</label>
+                    <input type="range" id="volumeSFX" min="0" max="100" value="100">
+                </div>
+                
+                <div class="configuracoes-item3">
+                    <label for="volumeMusica">Música</label>
+                    <input type="range" id="volumeMusica" min="0" max="100" value="100">
+                </div>
+                
+            </div>
+            
         </div>
-
-        <div class="configuracoes-itens">
-
-            <div class="configuracoes-item1">
-                <label for="volumeGeral">Volume Geral</label>
-                <input type="range" id="volumeGeral" min="0" max="100" value="100">
-            </div>
-
-            <div class="configuracoes-item2">
-                <label for="volumeSFX">Efeitos Sonoros</label>
-                <input type="range" id="volumeSFX" min="0" max="100" value="100">
-            </div>
-
-            <div class="configuracoes-item3">
-                <label for="volumeMusica">Música</label>
-                <input type="range" id="volumeMusica" min="0" max="100" value="100">
-            </div>
-
-        </div>
-
+        
     </div>
-
-</div>
-
+    <div id="nickJogador" class="nick-jogador escondido"></div>
+    
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
     <script src="jogo.js"></script>
