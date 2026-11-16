@@ -374,3 +374,92 @@ function mostrarConquista(titulo, pontos) {
 }
 
 atualizarBotoesTemas();
+
+if (dadosJogador) {
+    cliques = dadosJogador.score || 0;
+    contador.textContent = cliques;
+
+    if (cliques > 0 && promptInicio) {
+        promptInicio.classList.add("escondido");
+    }
+}
+
+let ultimoSalvo = cliques;
+let salvando = false;
+let temporizadorSalvar;
+
+async function salvarProgresso() {
+    if (!jogador || !senhaJogador || !dadosJogador) return;
+    if (salvando) {
+        temporizadorSalvar = setTimeout(salvarProgresso, 500);
+        return;
+    }
+    if (cliques === ultimoSalvo) return;
+
+    salvando = true;
+    const valor = cliques;
+
+    try {
+        const { error } = await BancoDeDados.rpc("salvar", {
+            p_usuario: jogador,
+            p_senha: senhaJogador,
+            p_score: valor,
+            p_moedas: dadosJogador.moedas,
+            p_inventario: dadosJogador.inventario,
+            p_upgrades: dadosJogador.upgrades,
+            p_progresso: dadosJogador.progresso
+        });
+        if (error) throw error;
+
+        ultimoSalvo = valor;
+
+
+        dadosJogador.score = valor;
+        sessionStorage.setItem("dadosJogador", JSON.stringify(dadosJogador));
+    } catch (e) {
+        console.error("Erro ao salvar:", e.message);
+    }
+
+    salvando = false;
+}
+
+
+new MutationObserver(function() {
+    clearTimeout(temporizadorSalvar);
+    temporizadorSalvar = setTimeout(salvarProgresso, 1000);
+}).observe(contador, { childList: true, characterData: true, subtree: true });
+
+
+setInterval(salvarProgresso, 5000);
+
+function salvarAoSair() {
+    if (!jogador || !senhaJogador || !dadosJogador) return;
+    if (cliques === ultimoSalvo) return;
+
+    fetch("https://zeaaeiiwftctedrumuzp.supabase.co/rest/v1/rpc/salvar", {
+        method: "POST",
+        keepalive: true,
+        headers: {
+            "Content-Type": "application/json",
+            "apikey": "sb_publishable_dPCcGEn70ozMH7gqL44zxQ_qvIMOpFa"
+        },
+        body: JSON.stringify({
+            p_usuario: jogador,
+            p_senha: senhaJogador,
+            p_score: cliques,
+            p_moedas: dadosJogador.moedas,
+            p_inventario: dadosJogador.inventario,
+            p_upgrades: dadosJogador.upgrades,
+            p_progresso: dadosJogador.progresso
+        })
+    });
+
+    ultimoSalvo = cliques;
+    dadosJogador.score = cliques;
+    sessionStorage.setItem("dadosJogador", JSON.stringify(dadosJogador));
+}
+
+document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === "hidden") salvarAoSair();
+});
+window.addEventListener("pagehide", salvarAoSair);
