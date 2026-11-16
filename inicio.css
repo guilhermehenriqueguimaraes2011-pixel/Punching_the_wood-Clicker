@@ -50,8 +50,8 @@ body.started::before {
 
 #titulo {
     font-size: 40px;
-    padding-bottom: 50px;
-    padding-top: 40px;
+    padding-bottom: 25px;
+    padding-top: 25px;
     width: 100%;
     text-align: center;
     font-family: "Press Start 2P", monospace;
@@ -152,7 +152,7 @@ body.started #botaoInformacoes.escondido  {
 }
 .container {
     position: absolute;
-    top: 55%;
+    top: 65%;
     left: 50%;
     transform: translate(-50%, -50%);
     display: grid;
