@@ -48,7 +48,19 @@ const temas = {
     }
 };
 let temaAtual = temas.default;
-const temasComprados = new Set();
+function lerTemasComprados(inventario) {
+    if (Array.isArray(inventario)) {
+        return inventario.filter((tema) => tema !== "default" && temas[tema]);
+    }
+
+    if (inventario && Array.isArray(inventario.temasComprados)) {
+        return inventario.temasComprados.filter((tema) => tema !== "default" && temas[tema]);
+    }
+
+    return [];
+}
+
+const temasComprados = new Set(lerTemasComprados(dadosJogador && dadosJogador.inventario));
 let temporizador;
 let temporizadorMadeira;
 let temporizadorImpacto;
@@ -224,6 +236,29 @@ function selecionarTema(nome) {
     atualizarBotoesTemas();
 }
 
+function salvarTemaComprado(nomeTema) {
+    if (!dadosJogador) return;
+
+    const inventario = dadosJogador.inventario;
+    if (Array.isArray(inventario)) {
+        if (!inventario.includes(nomeTema)) {
+            inventario.push(nomeTema);
+        }
+    } else {
+        const itensInventario = inventario && typeof inventario === "object" ? inventario : {};
+        const temasInventario = Array.isArray(itensInventario.temasComprados)
+            ? itensInventario.temasComprados
+            : [];
+
+        dadosJogador.inventario = {
+            ...itensInventario,
+            temasComprados: [...new Set([...temasInventario, nomeTema])]
+        };
+    }
+
+    sessionStorage.setItem("dadosJogador", JSON.stringify(dadosJogador));
+}
+
 document.querySelectorAll("[data-theme]").forEach((botao) => {
     botao.addEventListener("click", () => {
         const nomeTema = botao.dataset.theme;
@@ -239,8 +274,10 @@ document.querySelectorAll("[data-theme]").forEach((botao) => {
 
         totalCliques -= 50;
         temasComprados.add(nomeTema);
+        salvarTemaComprado(nomeTema);
         atualizarTela();
         selecionarTema(nomeTema);
+        salvarProgresso();
     });
 });
 
