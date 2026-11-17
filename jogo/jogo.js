@@ -13,6 +13,47 @@ const chaveFotoPerfilLocal = (usuario) => `punching_foto_perfil_${String(usuario
 const chaveTeclaCliqueLocal = "punching_tecla_clique";
 const teclaCliquePadrao = "Space";
 
+async function salvarFotoPerfilNoServidor(usuario, foto) {
+    const nomeUsuario = String(usuario || "").trim().toLowerCase();
+    const valorFoto = foto || perfilPadrao;
+
+    if (!nomeUsuario) return valorFoto;
+
+    try {
+        const { data, error } = await BancoDeDados
+            .from("foto")
+            .upsert({ usuario: nomeUsuario, foto: valorFoto }, { onConflict: "usuario" })
+            .select("foto")
+            .single();
+
+        if (error) throw error;
+        return data?.foto || valorFoto;
+    } catch (erro) {
+        console.warn("Não foi possível salvar a foto no servidor:", erro);
+        return valorFoto;
+    }
+}
+
+async function buscarFotoPerfilDoServidor(usuario) {
+    const nomeUsuario = String(usuario || "").trim().toLowerCase();
+
+    if (!nomeUsuario) return perfilPadrao;
+
+    try {
+        const { data, error } = await BancoDeDados
+            .from("foto")
+            .select("foto")
+            .eq("usuario", nomeUsuario)
+            .maybeSingle();
+
+        if (error) throw error;
+        return data?.foto || perfilPadrao;
+    } catch (erro) {
+        console.warn("Não foi possível buscar a foto do servidor:", erro);
+        return perfilPadrao;
+    }
+}
+
 function getTeclaCliqueSalva() {
     try {
         const teclaSalva = localStorage.getItem(chaveTeclaCliqueLocal);
@@ -426,6 +467,18 @@ function atualizarVolumeSFX() {
 
             if (error) throw error;
 
+            const { data: fotosData, error: fotosError } = await BancoDeDados.from("foto").select("usuario, foto");
+            const fotosPorUsuario = new Map();
+
+            if (!fotosError && Array.isArray(fotosData)) {
+                fotosData.forEach((itemFoto) => {
+                    if (!itemFoto || !itemFoto.usuario) return;
+                    fotosPorUsuario.set(String(itemFoto.usuario).trim().toLowerCase(), itemFoto.foto || perfilPadrao);
+                });
+            } else if (fotosError) {
+                console.warn("Não foi possível carregar fotos do ranking:", fotosError);
+            }
+
             if (!data || data.length === 0) {
                 status.textContent = "Ainda não há jogadores no ranking.";
                 return;
@@ -448,6 +501,7 @@ function atualizarVolumeSFX() {
                     Number.isFinite(pontos) ? pontos : 0
                 );
                 const corAvatarRanking = obterCorBordaAvatarPorUsuario(nomeJogador);
+                const fotoRanking = fotosPorUsuario.get(nomeJogador.trim().toLowerCase()) || obterFotoPerfilPorUsuario(nomeJogador);
 
                 linha.className = "ranking-item";
                 if (usuarioAtual && nomeJogador.toLowerCase() === usuarioAtual) {
@@ -457,7 +511,7 @@ function atualizarVolumeSFX() {
                 posicao.textContent = indice + 1;
                 avatar.className = "ranking-avatar";
                 avatar.alt = `${nomeJogador} avatar`;
-                avatar.src = obterFotoPerfilPorUsuario(nomeJogador);
+                avatar.src = fotoRanking || perfilPadrao;
                 avatar.style.setProperty("--ranking-avatar-border", corAvatarRanking);
                 avatar.style.borderColor = corAvatarRanking;
                 avatar.onerror = function() {
@@ -886,10 +940,21 @@ function aplicarCorBordaAvatar(cor) {
     document.documentElement.style.setProperty("--avatar-border-color", novaCor);
 }
 
-function atualizarFotoPerfil() {
+async function atualizarFotoPerfil() {
     if (!fotoPerfil) return;
-    fotoPerfil.src = obterFotoPerfilPorUsuario(jogador || "");
+
+    const usuarioAtual = String(jogador || "").trim().toLowerCase();
+    const fotoLocal = obterFotoPerfilPorUsuario(jogador || "");
+    fotoPerfil.src = fotoLocal;
     aplicarCorBordaAvatar(obterCorBordaAvatarPorUsuario(jogador || ""));
+
+    if (!usuarioAtual) return;
+
+    const fotoServidor = await buscarFotoPerfilDoServidor(usuarioAtual);
+    if (fotoServidor && fotoServidor !== fotoLocal) {
+        fotoPerfil.src = fotoServidor;
+        localStorage.setItem(chaveFotoPerfilLocal(jogador), fotoServidor);
+    }
 }
 
 if (usuarioInfo && nickJogador) {
@@ -904,7 +969,7 @@ if (inputFotoPerfil) {
         if (!arquivo) return;
 
         const leitor = new FileReader();
-        leitor.onload = function() {
+        leitor.onload = async function() {
             const resultado = String(leitor.result || "");
             if (!resultado) return;
 
@@ -914,6 +979,7 @@ if (inputFotoPerfil) {
 
             if (jogador) {
                 localStorage.setItem(chaveFotoPerfilLocal(jogador), resultado);
+                await salvarFotoPerfilNoServidor(jogador, resultado);
             }
         };
         leitor.readAsDataURL(arquivo);

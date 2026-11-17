@@ -176,6 +176,21 @@ $(document).ready(function() {
     "sb_publishable_dPCcGEn70ozMH7gqL44zxQ_qvIMOpFa"
 );
 
+const fotoPadraoLogin = "assets/sprites/Default/JerryIdle.gif";
+
+async function garantirFotoUsuarioNoServidor(usuario) {
+    if (!usuario) return;
+
+    try {
+        const nomeUsuario = String(usuario).trim().toLowerCase();
+        await BancoDeDados
+            .from("foto")
+            .upsert({ usuario: nomeUsuario, foto: fotoPadraoLogin }, { onConflict: "usuario" });
+    } catch (erro) {
+        console.warn("Não foi possível garantir a foto padrão do jogador:", erro);
+    }
+}
+
 function entrarNoJogo(usuario, senha, dados) {
     sessionStorage.setItem("jogador", usuario);
     sessionStorage.setItem("senhaJogador", senha);
@@ -198,6 +213,8 @@ $("#criar").on("click", async function() {
             p_senha: senha
         });
         if (error) throw error;
+
+        await garantirFotoUsuarioNoServidor(usuario);
 
         const { data, error: erroLogin } = await BancoDeDados.rpc("entrar", {
             p_usuario: usuario,
@@ -225,6 +242,7 @@ $("#entrar").on("click", async function() {
         });
         if (error) throw error;
 
+        await garantirFotoUsuarioNoServidor(usuario);
         entrarNoJogo(usuario, senha, data);
     } catch (e) {
         console.error(e.message);
