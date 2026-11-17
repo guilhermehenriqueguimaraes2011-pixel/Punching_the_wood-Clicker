@@ -29,7 +29,29 @@ async function salvarFotoPerfilNoServidor(usuario, foto) {
         if (error) throw error;
         return data?.foto || valorFoto;
     } catch (erro) {
-        console.warn("Não foi possível salvar a foto no servidor:", erro);
+        console.warn("Supabase client falhou ao salvar foto; tentando REST fallback:", erro);
+    }
+
+    try {
+        const resposta = await fetch(`${SUPABASE_URL}/rest/v1/foto?on_conflict=usuario`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_KEY,
+                "Authorization": `Bearer ${SUPABASE_KEY}`,
+                "Prefer": "resolution=merge-duplicates"
+            },
+            body: JSON.stringify({ usuario: nomeUsuario, foto: valorFoto })
+        });
+
+        if (!resposta.ok) {
+            const textoErro = await resposta.text();
+            throw new Error(`REST falhou (${resposta.status}): ${textoErro}`);
+        }
+
+        return valorFoto;
+    } catch (erroRest) {
+        console.error("Não foi possível salvar a foto no servidor:", erroRest);
         return valorFoto;
     }
 }
@@ -49,7 +71,27 @@ async function buscarFotoPerfilDoServidor(usuario) {
         if (error) throw error;
         return data?.foto || perfilPadrao;
     } catch (erro) {
-        console.warn("Não foi possível buscar a foto do servidor:", erro);
+        console.warn("Supabase client falhou ao buscar foto; tentando REST fallback:", erro);
+    }
+
+    try {
+        const resposta = await fetch(`${SUPABASE_URL}/rest/v1/foto?select=foto&usuario=eq.${encodeURIComponent(nomeUsuario)}`, {
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": `Bearer ${SUPABASE_KEY}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!resposta.ok) {
+            const textoErro = await resposta.text();
+            throw new Error(`REST falhou (${resposta.status}): ${textoErro}`);
+        }
+
+        const dados = await resposta.json();
+        return Array.isArray(dados) && dados.length > 0 ? (dados[0].foto || perfilPadrao) : perfilPadrao;
+    } catch (erroRest) {
+        console.error("Não foi possível buscar a foto do servidor:", erroRest);
         return perfilPadrao;
     }
 }
