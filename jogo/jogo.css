@@ -21,9 +21,37 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 16px;
     padding: 15px 25px;
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
+}
+
+.usuario-info {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 2px solid #72D6A0;
+    padding: 8px 12px;
+    max-width: 300px;
+}
+
+.usuario-info img {
+    width: 52px;
+    height: 52px;
+    object-fit: cover;
+    border: 3px solid var(--avatar-border-color, #72D6A0);
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.nick-jogador {
+    font-size: 12px;
+    color: #A5E8AC;
+    word-break: break-word;
+    margin-left: 4px;
 }
 
 .titulo {
@@ -158,15 +186,10 @@ button:hover {
     left: 30%;
     bottom: calc(10% + 10px);
     transform-origin: bottom left;
+    transform: scale(10);
     z-index: 1;
 }
-.personagem img {
-    display: block;
-    width: 140px;
-    height: auto;
-    object-fit: contain;
-    image-rendering: pixelated;
-}
+
 .madeira {
     position: absolute;
     left: calc(30% + 180px);
@@ -250,7 +273,9 @@ button:hover {
     filter: brightness(0.75);
 }
 
-.loja {
+.loja,
+.ranking-painel,
+.configuracoes-painel {
     position: fixed;
     inset: 0;
     display: none;
@@ -259,11 +284,15 @@ button:hover {
     background: rgba(0, 0, 0, 0.55);
 }
 
-.loja.aberta {
+.loja.aberta,
+.ranking-painel.aberta,
+.configuracoes-painel.aberta {
     display: flex;
 }
 
-.loja-janela {
+.loja-janela,
+.ranking-janela,
+.configuracoes-janela {
     width: min(560px, 85vw);
     background: #0f1d1a;
     border: 3px solid #72D6A0;
@@ -272,19 +301,24 @@ button:hover {
     color: #A5E8AC;
 }
 
-.loja-topo {
+.loja-topo,
+.ranking-topo,
+.configuracoes-topo {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
 }
 
-.loja-topo h2 {
+.loja-topo h2,
+.ranking-topo h2,
+.configuracoes-topo h2 {
     margin: 0;
     font-size: 24px;
 }
 
-.loja-itens {
+.loja-itens,
+.configuracoes-itens {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -315,170 +349,115 @@ button:hover {
     opacity: 0.6;
 }
 
-.ranking-painel {
-    position: fixed;
-    inset: 0;
-    z-index: 20;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    box-sizing: border-box;
-    background: rgba(0, 0, 0, 0.72);
-}
-
-.ranking-painel.aberta {
+.configuracoes-itens {
     display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
-.ranking-janela {
-    width: min(520px, 90vw);
-    max-height: 82vh;
-    overflow-y: auto;
-    box-sizing: border-box;
-    padding: 22px;
-    color: #dfffe6;
-    background: #0f1d1a;
-    border: 2px solid #72D6A0;
-    border-radius: 14px;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 22px rgba(114, 214, 160, 0.12);
-    animation: rankingEntrada 0.28s ease-out;
-}
-
-.ranking-topo,
-.ranking-rodape {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
-
-.ranking-topo {
-    margin-bottom: 18px;
-}
-
-.ranking-topo h2 {
-    margin: 0;
-    color: #A5E8AC;
-    font-size: clamp(16px, 4vw, 22px);
-}
-
-.ranking-topo p {
-    margin: 9px 0 0;
-    color: #a4b9ad;
-    font: 12px sans-serif;
-}
-
-#fecharRanking {
-    padding: 6px 9px;
-    border-radius: 8px;
-    font-size: 15px;
-}
-
-.ranking-lista {
+.configuracoes-item1,
+.configuracoes-item2,
+.configuracoes-item3,
+.configuracoes-item4 {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin: 0;
-    padding: 0;
+    color: #dfffe6;
+    font-size: 12px;
+}
+
+.configuracoes-item1 input,
+.configuracoes-item2 input,
+.configuracoes-item3 input,
+.configuracoes-item4 input {
+    width: 100%;
+}
+
+.ranking-painel {
+    z-index: 30;
+}
+
+.ranking-janela {
+    width: min(560px, 85vw);
+    background: #0f1d1a;
+    border: 3px solid #72D6A0;
+    box-shadow: 4px 4px 0 #153D32;
+    padding: 20px;
+    color: #A5E8AC;
+}
+
+.ranking-lista {
     list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .ranking-item {
-    display: flex;
+    display: grid;
+    grid-template-columns: 36px 46px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 2px solid #72D6A0;
     padding: 10px 12px;
-    background: rgba(255, 255, 255, 0.045);
-    border: 1px solid rgba(114, 214, 160, 0.24);
-    border-radius: 9px;
-    font: 14px sans-serif;
+    color: #dfffe6;
+    font-size: 12px;
+}
+
+.ranking-posicao {
+    font-weight: bold;
+    color: #A5E8AC;
+}
+
+.ranking-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--ranking-avatar-border, #72D6A0);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 0 2px rgba(114, 214, 160, 0.25);
+    flex-shrink: 0;
+}
+
+.ranking-nome {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: 2px;
 }
 
 .ranking-valores {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    min-width: 90px;
     text-align: right;
-    font-size: 11px;
-}
-
-.ranking-saldo {
-    color: #A5E8AC;
-    font-weight: bold;
-}
-
-.ranking-recorde {
-    color: #a4b9ad;
-}
-
-.ranking-item.jogador-atual {
-    background: rgba(114, 214, 160, 0.14);
-    border-color: #72D6A0;
-}
-
-.ranking-posicao {
-    display: grid;
-    width: 30px;
-    height: 30px;
-    flex: 0 0 30px;
-    place-items: center;
-    color: #A5E8AC;
-    background: #153D32;
-    border-radius: 50%;
-    font-weight: bold;
-}
-
-.ranking-nome {
-    overflow: hidden;
-    flex: 1;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.ranking-score {
-    color: #A5E8AC;
-    font-weight: bold;
-    white-space: nowrap;
 }
 
 .ranking-status {
-    min-height: 18px;
-    margin: 14px 0;
-    color: #a4b9ad;
-    font: 12px sans-serif;
-    text-align: center;
+    min-height: 20px;
+    margin: 12px 0;
+    color: #dfffe6;
+    font-size: 12px;
 }
 
 .ranking-rodape {
-    padding-top: 12px;
-    border-top: 1px solid rgba(114, 214, 160, 0.2);
-    color: #a4b9ad;
-    font: 11px sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 12px;
+    color: #dfffe6;
+    font-size: 12px;
 }
 
-.ranking-rodape button {
-    padding: 8px 10px;
-    border-radius: 8px;
-    font-size: 11px;
-}
-
-.ranking-rodape button:disabled {
-    cursor: wait;
+.loja-item button:disabled {
+    cursor: default;
     opacity: 0.6;
-}
-
-@keyframes rankingEntrada {
-    from {
-        opacity: 0;
-        transform: translateY(10px) scale(0.98);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
 }
 
 @media (max-width: 1245px) {
@@ -519,13 +498,9 @@ button:hover {
     }
 
     .personagem {
-        left: calc(50% - 118px);
-        bottom: 12%;
-        transform: none; 
-    }
-
-    .personagem img {
-        width: 100px; 
+        left: 30%;
+        bottom: 8%;
+        transform: scale(7);
     }
 
     .madeira {
@@ -639,11 +614,14 @@ button:hover {
     transform: scale(0.95) rotate(2deg);
 }
 
-.FOV.tema-sonic .personagem.sonic-idle {
+.FOV.tema-sonic .personagem.sonic-action {
+    transform: scale(20);
     left: 30%;
+    transform-origin: bottom left;
 }
 
 .FOV.tema-sonic .personagem.sonic-idle img {
+    left: 30%;
     transform: scale(0.47);
     transform-origin: bottom left;
 }
@@ -747,142 +725,4 @@ button:hover {
     .FOV.tema-mario .madeira {
         left: calc(50% + 32px);
     }
-}
-
-/* PAINEL DE CONFIGURAÇÕES */
-
-.configuracoes-painel {
-    position: fixed;
-    inset: 0;
-    display: none;
-    justify-content: flex-end;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: 10;
-}
-
-.configuracoes-painel.aberta {
-    display: flex;
-}
-
-.configuracoes-janela {
-    width: 380px;
-    max-width: 85%;
-    height: 100%;
-    box-sizing: border-box;
-    padding: 25px;
-    background: #0f1d1a;
-    border-left: 3px solid #72D6A0;
-    box-shadow: -4px 0 0 #153D32;
-    color: #A5E8AC;
-}
-
-.configuracoes-topo {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
-}
-
-.configuracoes-topo h2 {
-    font-size: 22px;
-    font-family: 'Press Start 2P', cursive;
-    color: #A5E8AC;
-}
-
-#fecharConfiguracoes {
-    background: #153D32;
-    color: #A5E8AC;
-    border: 2px solid #72D6A0;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 18px;
-}
-
-#fecharConfiguracoes:hover {
-    background: #286B50;
-}
-
-.configuracoes-itens {
-    display: flex;
-    flex-direction: column;
-    gap: 35px;
-}
-
-.configuracoes-item1,
-.configuracoes-item2,
-.configuracoes-item3 {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.configuracoes-item1 label,
-.configuracoes-item2 label,
-.configuracoes-item3 label {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 11px;
-    color: #A5E8AC;
-}
-
-.configuracoes-item1 input,
-.configuracoes-item2 input,
-.configuracoes-item3 input {
-    width: 100%;
-    accent-color: #72D6A0;
-    cursor: pointer;
-}.notificacao-conquista {
-    position: absolute;
-    top: 25%;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    text-align: center;
-    pointer-events: none;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 20px;
-    color: #FFD447;
-    text-shadow: 3px 3px #713D16;
-    white-space: nowrap;
-}
-
-.boing {
-    animation: boing 1s ease-out forwards;
-}
-
-@keyframes boing {
-    0% {
-        opacity: 0;
-        scale: 0.1;
-    }
-
-    50% {
-        opacity: 1;
-        scale: 1.3;
-    }
-
-    70% {
-        scale: 0.9;
-    }
-
-    100% {
-        opacity: 0;
-        scale: 1;
-    }
-}
-.nick-jogador {
-    position: fixed;
-    left: 12px;
-    bottom: 12px;
-    z-index: 50;
-    padding: 8px 12px;
-    background-color: #0B1918;
-    color: #A5E8AC;
-    border: 3px solid #72D6A0;
-    box-shadow: 4px 4px 0 #153D32;
-    font-family: "Press Start 2P", monospace;
-    font-size: 12px;
-    max-width: 60vw;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }

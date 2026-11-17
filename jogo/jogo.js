@@ -7,6 +7,29 @@ try {
     dadosJogador = null;
 }
 
+const perfilPadrao = "assets/sprites/Default/JerryIdle.gif";
+const chaveTemaLocal = (usuario) => `punching_tema_usuario_${String(usuario || "").trim().toLowerCase()}`;
+const chaveFotoPerfilLocal = (usuario) => `punching_foto_perfil_${String(usuario || "").trim().toLowerCase()}`;
+const chaveTeclaCliqueLocal = "punching_tecla_clique";
+const teclaCliquePadrao = "Space";
+
+function getTeclaCliqueSalva() {
+    try {
+        const teclaSalva = localStorage.getItem(chaveTeclaCliqueLocal);
+        return teclaSalva || teclaCliquePadrao;
+    } catch (erro) {
+        return teclaCliquePadrao;
+    }
+}
+
+function salvarTeclaClique(tecla) {
+    try {
+        localStorage.setItem(chaveTeclaCliqueLocal, tecla || teclaCliquePadrao);
+    } catch (erro) {
+        console.warn("Não foi possível salvar a tecla de clique:", erro);
+    }
+}
+
 const SUPABASE_URL = "https://zeaaeiiwftctedrumuzp.supabase.co";
 const SUPABASE_KEY = "sb_publishable_dPCcGEn70ozMH7gqL44zxQ_qvIMOpFa";
 const BancoDeDados = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -66,6 +89,28 @@ let temporizadorMadeira;
 let temporizadorImpacto;
 let temporizadorReparo;
 let musicaIniciada = false;
+
+function getTemaSalvoNoDispositivo() {
+    if (!jogador) return null;
+
+    try {
+        const temaSalvo = localStorage.getItem(chaveTemaLocal(jogador));
+        return temaSalvo || null;
+    } catch (erro) {
+        console.warn("Não foi possível ler o tema salvo do navegador:", erro);
+        return null;
+    }
+}
+
+function salvarTemaNoDispositivo(nomeTema) {
+    if (!jogador || !nomeTema) return;
+
+    try {
+        localStorage.setItem(chaveTemaLocal(jogador), nomeTema);
+    } catch (erro) {
+        console.warn("Não foi possível salvar o tema no navegador:", erro);
+    }
+}
 
 function soltarParticulas() {
     if (!particulas) return;
@@ -128,60 +173,102 @@ function atualizarMusicaTema() {
     }
 }
 
-if (personagem && contador) {
-    personagem.addEventListener("click", function() {
+function processarClique() {
+    if (!personagem || !contador) return;
 
-        if (somSoco) {
+    if (somSoco) {
         somSoco.currentTime = 0;
         somSoco.play();
-        }
+    }
 
-        if (promptInicio) {
-            promptInicio.classList.add("escondido");
-        }
+    if (promptInicio) {
+        promptInicio.classList.add("escondido");
+    }
 
-        if (musica && !musicaIniciada) {
-            musicaIniciada = true;
-            const reproducao = musica.play();
-            if (reproducao) {
-                reproducao.catch(() => {
-                    musicaIniciada = false;
-                });
-            }
+    if (musica && !musicaIniciada) {
+        musicaIniciada = true;
+        const reproducao = musica.play();
+        if (reproducao) {
+            reproducao.catch(() => {
+                musicaIniciada = false;
+            });
         }
+    }
 
-        clearTimeout(temporizador);
-        areaPersonagem.classList.remove("sonic-idle");
+    clearTimeout(temporizador);
         areaPersonagem.classList.remove("mario-idle");
+        areaPersonagem.classList.remove("sonic-action");
         madeira.classList.remove("mario-idle");
         personagem.src = `${temaAtual.personagemAcao}?t=${Date.now()}`;
+        if (temaAtual === temas.sonic) {
+            areaPersonagem.classList.add("sonic-action");
+        }
         temporizador = setTimeout(() => {
             personagem.src = temaAtual.personagemParado;
-            areaPersonagem.classList.toggle("sonic-idle", temaAtual === temas.sonic);
-            areaPersonagem.classList.toggle("mario-idle", temaAtual === temas.mario);
-            madeira.classList.toggle("mario-idle", temaAtual === temas.mario);
+            areaPersonagem.classList.remove("sonic-action");
+        areaPersonagem.classList.toggle("mario-idle", temaAtual === temas.mario);
+        madeira.classList.toggle("mario-idle", temaAtual === temas.mario);
+    }, 300);
+
+    if (temaAtual === temas.mario) {
+        lancarBolaDeFogo();
+    }
+
+    if (madeira) {
+        clearTimeout(temporizadorMadeira);
+        clearTimeout(temporizadorImpacto);
+        madeira.src = `${temaAtual.madeiraAcao}?t=${Date.now()}`;
+        madeira.classList.add("impacto");
+        soltarParticulas();
+        temporizadorImpacto = setTimeout(() => {
+            madeira.classList.remove("impacto");
+        }, 100);
+        temporizadorMadeira = setTimeout(() => {
+            madeira.src = temaAtual.madeiraParada;
         }, 300);
+        clicaNaMadeira();
+    }
+}
 
-        if (temaAtual === temas.mario) {
-            lancarBolaDeFogo();
-        }
+if (personagem && contador) {
+    personagem.addEventListener("click", processarClique);
+}
 
-        if (madeira) {
-            clearTimeout(temporizadorMadeira);
-            clearTimeout(temporizadorImpacto);
-            madeira.src = `${temaAtual.madeiraAcao}?t=${Date.now()}`;
-            madeira.classList.add("impacto");
-            soltarParticulas();
-            temporizadorImpacto = setTimeout(() => {
-                madeira.classList.remove("impacto");
-            }, 100);
-            temporizadorMadeira = setTimeout(() => {
-                madeira.src = temaAtual.madeiraParada;
-            }, 300);
-            clicaNaMadeira();
-        }
+const teclaCliqueConfig = document.getElementById("teclaClique");
+let teclaCliqueAtiva = getTeclaCliqueSalva();
+
+function aplicarTeclaClique(tecla) {
+    teclaCliqueAtiva = tecla || teclaCliquePadrao;
+    salvarTeclaClique(teclaCliqueAtiva);
+
+    if (teclaCliqueConfig) {
+        teclaCliqueConfig.value = teclaCliqueAtiva;
+    }
+}
+
+if (teclaCliqueConfig) {
+    aplicarTeclaClique(getTeclaCliqueSalva());
+    teclaCliqueConfig.addEventListener("change", function() {
+        aplicarTeclaClique(this.value);
     });
 }
+
+document.addEventListener("keydown", function(event) {
+    const alvo = event.target;
+    const eInputOuTexto = alvo && (
+        alvo.tagName === "INPUT" ||
+        alvo.tagName === "SELECT" ||
+        alvo.tagName === "TEXTAREA" ||
+        alvo.isContentEditable
+    );
+
+    if (eInputOuTexto) return;
+    if (event.repeat) return;
+    if (event.code !== teclaCliqueAtiva) return;
+
+    event.preventDefault();
+    processarClique();
+});
 
 const botaoMelhoria = document.getElementById("melhoriaClique");
 const caixaMelhoria = document.getElementById("caixa-melhoria");
@@ -218,14 +305,23 @@ function atualizarBotoesTemas() {
     });
 }
 
+function aplicarTemaSalvo() {
+    const temaSalvo = getTemaSalvoNoDispositivo();
+    if (!temaSalvo || !temas[temaSalvo]) return;
+    if (temaSalvo === "default" || temasComprados.has(temaSalvo)) {
+        selecionarTema(temaSalvo);
+    }
+}
+
 function selecionarTema(nome) {
     clearTimeout(temporizador);
     clearTimeout(temporizadorMadeira);
     clearTimeout(temporizadorImpacto);
-    temaAtual = temas[nome];
+    temaAtual = temas[nome] || temas.default;
     document.querySelector(".FOV").classList.toggle("tema-sonic", nome === "sonic");
     document.querySelector(".FOV").classList.toggle("tema-mario", nome === "mario");
     personagem.src = temaAtual.personagemParado;
+    areaPersonagem.classList.remove("sonic-action");
     areaPersonagem.classList.toggle("sonic-idle", nome === "sonic");
     areaPersonagem.classList.remove("mario-idle");
     madeira.src = temaAtual.madeiraParada;
@@ -234,6 +330,7 @@ function selecionarTema(nome) {
     document.querySelector(".fundo").style.backgroundImage = `url("${temaAtual.fundo}")`;
     atualizarMusicaTema();
     atualizarBotoesTemas();
+    salvarTemaNoDispositivo(nome);
 }
 
 function salvarTemaComprado(nomeTema) {
@@ -338,6 +435,7 @@ function atualizarVolumeSFX() {
             data.forEach((item, indice) => {
                 const linha = document.createElement("li");
                 const posicao = document.createElement("span");
+                const avatar = document.createElement("img");
                 const nome = document.createElement("span");
                 const valores = document.createElement("div");
                 const saldo = document.createElement("span");
@@ -349,6 +447,7 @@ function atualizarVolumeSFX() {
                     Number(item.scoreMaximo) || 0,
                     Number.isFinite(pontos) ? pontos : 0
                 );
+                const corAvatarRanking = obterCorBordaAvatarPorUsuario(nomeJogador);
 
                 linha.className = "ranking-item";
                 if (usuarioAtual && nomeJogador.toLowerCase() === usuarioAtual) {
@@ -356,6 +455,14 @@ function atualizarVolumeSFX() {
                 }
                 posicao.className = "ranking-posicao";
                 posicao.textContent = indice + 1;
+                avatar.className = "ranking-avatar";
+                avatar.alt = `${nomeJogador} avatar`;
+                avatar.src = obterFotoPerfilPorUsuario(nomeJogador);
+                avatar.style.setProperty("--ranking-avatar-border", corAvatarRanking);
+                avatar.style.borderColor = corAvatarRanking;
+                avatar.onerror = function() {
+                    avatar.src = perfilPadrao;
+                };
                 nome.className = "ranking-nome";
                 nome.textContent = nomeJogador;
                 valores.className = "ranking-valores";
@@ -364,7 +471,7 @@ function atualizarVolumeSFX() {
                 recorde.className = "ranking-recorde";
                 recorde.textContent = `Recorde: ${pontosMaximos.toLocaleString("pt-BR")}`;
                 valores.append(saldo, recorde);
-                linha.append(posicao, nome, valores);
+                linha.append(posicao, avatar, nome, valores);
                 lista.appendChild(linha);
             });
 
@@ -476,10 +583,10 @@ cliquesPorClique += nivelMelhoriaClique;
 cliquesPorSegundo = nivelMelhoriaSegundo * 0.5;
 custoMelhoria = Number(melhoriasSalvas.clickCost) > 0
     ? Number(melhoriasSalvas.clickCost)
-    : calcularCustoMelhoria(150, 1.4, nivelMelhoriaClique);
+    : calcularCustoMelhoria(150, 1.25, nivelMelhoriaClique);
 custoMelhoriaSegundo = Number(melhoriasSalvas.perSecondCost) > 0
     ? Number(melhoriasSalvas.perSecondCost)
-    : calcularCustoMelhoria(150, 1.6, nivelMelhoriaSegundo);
+    : calcularCustoMelhoria(150, 1.4, nivelMelhoriaSegundo);
 
 function atualizarMelhoriasSalvas() {
     if (!dadosJogador) return;
@@ -523,15 +630,17 @@ function calcularCustoLote(custo, multiplicador, quantidade) {
 function atualizarBotoesMelhoria() {
     const quantidadeClique = Number(document.getElementById("quantidadeMelhoriaClique").value);
     const quantidadeSegundo = Number(document.getElementById("quantidadeMelhoriaSegundo").value);
-    const loteClique = calcularCustoLote(custoMelhoria, 1.4, quantidadeClique);
-    const loteSegundo = calcularCustoLote(custoMelhoriaSegundo, 1.6, quantidadeSegundo);
+    const loteClique = calcularCustoLote(custoMelhoria, 1.25, quantidadeClique);
+    const loteSegundo = calcularCustoLote(custoMelhoriaSegundo, 1.4, quantidadeSegundo);
+    const proximoCustoClique = Math.ceil(custoMelhoria * 1.25);
+    const proximoCustoSegundo = Math.ceil(custoMelhoriaSegundo * 1.4);
     const botaoClique = document.getElementById("comprarMelhoriaClique");
     const botaoSegundo = document.getElementById("comprarMelhoriaSegundo");
 
     document.getElementById("nivelMelhoriaClique").textContent =
-        `Nível: ${nivelMelhoriaClique} | Próximo custo: ${custoMelhoria} cliques`;
+        `Nível: ${nivelMelhoriaClique} | Próximo custo: ${proximoCustoClique} cliques`;
     document.getElementById("nivelMelhoriaSegundo").textContent =
-        `Nível: ${nivelMelhoriaSegundo} | Próximo custo: ${custoMelhoriaSegundo} cliques`;
+        `Nível: ${nivelMelhoriaSegundo} | Próximo custo: ${proximoCustoSegundo} cliques`;
     botaoClique.textContent = `Comprar (${loteClique.custoTotal} Cliques)`;
     botaoSegundo.textContent = `Comprar (${loteSegundo.custoTotal} Cliques)`;
     botaoClique.disabled = totalCliques < loteClique.custoTotal;
@@ -540,7 +649,7 @@ function atualizarBotoesMelhoria() {
 
 function comprarMelhoria() {
     const quantidade = Number(document.getElementById("quantidadeMelhoriaClique").value);
-    const lote = calcularCustoLote(custoMelhoria, 1.4, quantidade);
+    const lote = calcularCustoLote(custoMelhoria, 1.25, quantidade);
 
     if (totalCliques < lote.custoTotal) {
         alert("Você não tem cliques suficientes.");
@@ -559,7 +668,7 @@ function comprarMelhoria() {
 
 function comprarMelhoriaPorSegundo() {
     const quantidade = Number(document.getElementById("quantidadeMelhoriaSegundo").value);
-    const lote = calcularCustoLote(custoMelhoriaSegundo, 1.6, quantidade);
+    const lote = calcularCustoLote(custoMelhoriaSegundo, 1.4, quantidade);
 
     if (totalCliques < lote.custoTotal) {
         alert("Você não tem cliques suficientes.");
@@ -646,6 +755,7 @@ if (dadosJogador) {
     }
 }
 
+aplicarTemaSalvo();
 atualizarBotoesMelhoria();
 
 let cliquesAutomaticosPendentes = 0;
@@ -740,9 +850,88 @@ document.addEventListener("visibilitychange", function() {
 });
 window.addEventListener("pagehide", salvarAoSair);
 
+const usuarioInfo = document.querySelector("#usuarioInfo");
 const nickJogador = document.querySelector("#nickJogador");
+const fotoPerfil = document.querySelector("#fotoPerfil");
+const inputFotoPerfil = document.querySelector("#fotoPerfilUpload");
+const inputCorBordaAvatar = document.querySelector("#corBordaAvatar");
+const chaveCorBordaAvatarLocal = (usuario) => `punching_cor_borda_avatar_${String(usuario || "").trim().toLowerCase()}`;
+const corBordaAvatarPadrao = "#72D6A0";
 
-if (nickJogador) {
+function obterFotoPerfilPorUsuario(usuario) {
+    const chavePerfil = chaveFotoPerfilLocal(String(usuario || ""));
+
+    try {
+        return localStorage.getItem(chavePerfil) || perfilPadrao;
+    } catch (erro) {
+        return perfilPadrao;
+    }
+}
+
+function obterCorBordaAvatarPorUsuario(usuario) {
+    const chaveCor = chaveCorBordaAvatarLocal(String(usuario || ""));
+
+    try {
+        return localStorage.getItem(chaveCor) || corBordaAvatarPadrao;
+    } catch (erro) {
+        return corBordaAvatarPadrao;
+    }
+}
+
+function aplicarCorBordaAvatar(cor) {
+    const novaCor = cor || corBordaAvatarPadrao;
+    if (fotoPerfil) {
+        fotoPerfil.style.borderColor = novaCor;
+    }
+    document.documentElement.style.setProperty("--avatar-border-color", novaCor);
+}
+
+function atualizarFotoPerfil() {
+    if (!fotoPerfil) return;
+    fotoPerfil.src = obterFotoPerfilPorUsuario(jogador || "");
+    aplicarCorBordaAvatar(obterCorBordaAvatarPorUsuario(jogador || ""));
+}
+
+if (usuarioInfo && nickJogador) {
     nickJogador.textContent = (jogador || "Visitante");
-    nickJogador.classList.remove("escondido");
+    usuarioInfo.classList.remove("escondido");
+    atualizarFotoPerfil();
+}
+
+if (inputFotoPerfil) {
+    inputFotoPerfil.addEventListener("change", function(event) {
+        const arquivo = event.target.files && event.target.files[0];
+        if (!arquivo) return;
+
+        const leitor = new FileReader();
+        leitor.onload = function() {
+            const resultado = String(leitor.result || "");
+            if (!resultado) return;
+
+            if (fotoPerfil) {
+                fotoPerfil.src = resultado;
+            }
+
+            if (jogador) {
+                localStorage.setItem(chaveFotoPerfilLocal(jogador), resultado);
+            }
+        };
+        leitor.readAsDataURL(arquivo);
+    });
+}
+
+if (inputCorBordaAvatar) {
+    const corAtual = obterCorBordaAvatarPorUsuario(jogador || "");
+    inputCorBordaAvatar.value = corAtual;
+    aplicarCorBordaAvatar(corAtual);
+
+    inputCorBordaAvatar.addEventListener("input", function(event) {
+        const novaCor = event.target.value || corBordaAvatarPadrao;
+
+        if (jogador) {
+            localStorage.setItem(chaveCorBordaAvatarLocal(jogador), novaCor);
+        }
+
+        aplicarCorBordaAvatar(novaCor);
+    });
 }

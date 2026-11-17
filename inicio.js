@@ -31,6 +31,21 @@
         });
         //entrando 
 $(document).ready(function() {
+    const credenciaisSalvas = (() => {
+        try {
+            return {
+                usuario: localStorage.getItem("punching_usuario_salvo") || "",
+                senha: localStorage.getItem("punching_senha_salva") || ""
+            };
+        } catch (erro) {
+            return { usuario: "", senha: "" };
+        }
+    })();
+
+    if (credenciaisSalvas.usuario && credenciaisSalvas.senha) {
+        $("#UsuarioEntrar").val(credenciaisSalvas.usuario);
+        $("#SenhaEntrar").val(credenciaisSalvas.senha);
+    }
 
     let BtEntrar = $("#botaoEntrar");
 
@@ -163,7 +178,9 @@ $(document).ready(function() {
 
 function entrarNoJogo(usuario, senha, dados) {
     sessionStorage.setItem("jogador", usuario);
-    sessionStorage.setItem("senhaJogador", senha); 
+    sessionStorage.setItem("senhaJogador", senha);
+    localStorage.setItem("punching_usuario_salvo", usuario);
+    localStorage.setItem("punching_senha_salva", senha);
     sessionStorage.setItem("dadosJogador", JSON.stringify(dados));
     window.location.href = "jogo/jogo.html";
 }

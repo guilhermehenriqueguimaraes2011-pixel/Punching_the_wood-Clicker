@@ -20,6 +20,11 @@
         <div class="fundo">
             <header class="cabecalho">
                 <h1 class="titulo">Punching The Wood!</h1>
+
+                <div class="usuario-info escondido" id="usuarioInfo">
+                    <img id="fotoPerfil" src="assets/sprites/Default/JerryIdle.gif" alt="Foto de perfil">
+                    <span id="nickJogador">Visitante</span>
+                </div>
                 
                 <nav class="botoes-superiores">
                     <button id="configuracoes" type="button">Configurações</button>
@@ -133,14 +138,37 @@
                     <label for="volumeMusica">Música</label>
                     <input type="range" id="volumeMusica" min="0" max="100" value="100">
                 </div>
+
+                <div class="configuracoes-item4">
+                    <label for="fotoPerfilUpload">Foto de perfil</label>
+                    <input type="file" id="fotoPerfilUpload" accept="image/*">
+                </div>
+
+                <div class="configuracoes-item5">
+                    <label for="corBordaAvatar">Cor da borda da foto</label>
+                    <input type="color" id="corBordaAvatar" value="#72D6A0">
+                </div>
+
+                <div class="configuracoes-item6">
+                    <label for="teclaClique">Tecla de clique</label>
+                    <select id="teclaClique">
+                        <option value="Space">Barra de espaço</option>
+                        <option value="Enter">Enter</option>
+                        <option value="KeyA">A</option>
+                        <option value="KeyS">S</option>
+                        <option value="KeyD">D</option>
+                        <option value="KeyF">F</option>
+                        <option value="KeyJ">J</option>
+                        <option value="KeyK">K</option>
+                        <option value="KeyL">L</option>
+                    </select>
+                </div>
                 
             </div>
             
         </div>
         
     </div>
-    <div id="nickJogador" class="nick-jogador escondido"></div>
-    
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
     <script src="jogo.js"></script>
