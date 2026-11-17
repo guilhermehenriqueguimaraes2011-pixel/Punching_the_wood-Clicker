@@ -158,10 +158,15 @@ button:hover {
     left: 30%;
     bottom: calc(10% + 10px);
     transform-origin: bottom left;
-    transform: scale(10);
     z-index: 1;
 }
-
+.personagem img {
+    display: block;
+    width: 140px;
+    height: auto;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
 .madeira {
     position: absolute;
     left: calc(30% + 180px);
@@ -514,9 +519,13 @@ button:hover {
     }
 
     .personagem {
-        left: 30%;
-        bottom: 8%;
-        transform: scale(7);
+        left: calc(50% - 118px);
+        bottom: 12%;
+        transform: none; 
+    }
+
+    .personagem img {
+        width: 100px; 
     }
 
     .madeira {
