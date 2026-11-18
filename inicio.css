@@ -34,7 +34,8 @@ body.started::before {
 #playButton,
 #botaoCriar,
 #botaoEntrar,
-#botaoInformacoes {
+#botaoInformacoes,
+#botaoExtras {
     width: 370px;
     height: 60px;
     background-color: #0B1918;
@@ -67,14 +68,17 @@ body.started::before {
 
 #botaoCriar,
 #botaoEntrar,
-#botaoInformacoes {
+#botaoInformacoes,
+#botaoExtras {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
 }
 
 body.started #botaoCriar,
-body.started #botaoEntrar {
+body.started #botaoEntrar,
+body.started #botaoExtras,
+body.started #botaoInformacoes {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
@@ -87,14 +91,16 @@ body.started #playButton {
 #playButton:hover,
 #botaoCriar:hover,
 #botaoEntrar:hover,
-#botaoInformacoes:hover {
+#botaoInformacoes:hover,
+#botaoExtras:hover {
     background: #153D32;
     color: white;
 }
 
 #botaoCriar:disabled,
 #botaoEntrar:disabled,
-#botaoInformacoes:disabled {
+#botaoInformacoes:disabled,
+#botaoExtras:disabled {
     cursor: default;
 }
 body.started #botaoCriar,
@@ -145,7 +151,8 @@ body.started #botaoInformacoes {
 }
 body.started #botaoCriar.escondido,
 body.started #botaoEntrar.escondido,
-body.started #botaoInformacoes.escondido  {
+body.started #botaoInformacoes.escondido,
+body.started #botaoExtras.escondido {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -169,6 +176,15 @@ body.started #botaoInformacoes.escondido  {
 #botaoEntrar {
     grid-area: 2 / 1;
 }
+
+#botaoInformacoes {
+    grid-area: 3 / 1;
+}
+
+#botaoExtras {
+    grid-area: 4 / 1;
+}
+
 #UsuarioEntrar,
 #SenhaEntrar {
     width: 370px;
@@ -281,7 +297,9 @@ body.started #botaoInformacoes.escondido  {
 #botaoCriar:active,
 #botaoEntrar:active,
 #botaoInformacoes:active,
-#criar:active {
+#botaoExtras:active,
+#criar:active,
+.botao-extra:active {
     transform: translate(4px, 4px);
     box-shadow: none;
 }
@@ -431,6 +449,107 @@ body.started #botaoVoltar {
     border: 1px solid #72D6A0;
 }
 
+.extras {
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 750px;
+    max-width: 90%;
+    box-sizing: border-box;
+    padding: 25px;
+    background: rgba(5, 18, 15, 0.96);
+    border: 4px solid #72D6A0;
+    box-shadow: 7px 7px 0 #153D32;
+    color: #A5E8AC;
+    font-family: "Press Start 2P", monospace;
+    text-align: center;
+    z-index: 5;
+}
+
+.extras.visivel {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+}
+
+.extras h2 {
+    font-size: 20px;
+    color: white;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #72D6A0;
+    text-shadow: 4px 4px 0 #153D32;
+}
+
+.fechar-extras {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 42px;
+    height: 42px;
+    border: 3px solid #72D6A0;
+    background: #0B1918;
+    color: #A5E8AC;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #153D32;
+}
+
+.fechar-extras:hover {
+    background: #153D32;
+    color: white;
+}
+
+.extra-opcao {
+    background: #0B1918;
+    border: 2px solid #397D5C;
+    padding: 18px;
+    margin-bottom: 18px;
+    box-shadow: 3px 3px 0 #153D32;
+}
+
+.extra-opcao p {
+    min-height: 24px;
+    margin: 0 0 16px;
+    font-size: 11px;
+    line-height: 2;
+}
+
+.extra-titulo {
+    margin: 0 0 20px;
+    color: white;
+    font-size: 16px;
+    line-height: 1.8;
+    text-shadow: 3px 3px 0 #153D32;
+}
+
+.botao-extra {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 370px;
+    max-width: 100%;
+    height: 60px;
+    box-sizing: border-box;
+    background-color: #0B1918;
+    color: #A5E8AC;
+    border: 3px solid #72D6A0;
+    font-family: "Press Start 2P", monospace;
+    font-size: 20px;
+    text-decoration: none;
+    box-shadow: 4px 4px 0 #153D32;
+}
+
+.botao-extra:hover {
+    background: #153D32;
+    color: white;
+}
+
 @media (max-width: 900px) {
     #titulo {
         padding: 32px 16px 40px;
@@ -447,6 +566,7 @@ body.started #botaoVoltar {
     #botaoCriar,
     #botaoEntrar,
     #botaoInformacoes,
+    #botaoExtras,
     #entrar,
     #criar,
     #UsuarioEntrar,
@@ -461,6 +581,7 @@ body.started #botaoVoltar {
     #botaoCriar,
     #botaoEntrar,
     #botaoInformacoes,
+    #botaoExtras,
     #entrar,
     #criar {
         font-size: clamp(12px, 2.2vw, 18px);
@@ -470,7 +591,8 @@ body.started #botaoVoltar {
         row-gap: clamp(48px, 9vh, 80px);
     }
 
-    .informacoes {
+    .informacoes,
+    .extras {
         box-sizing: border-box;
         width: 750px;
         max-width: calc(100% - 32px);
@@ -489,6 +611,7 @@ body.started #botaoVoltar {
     #botaoCriar,
     #botaoEntrar,
     #botaoInformacoes,
+    #botaoExtras,
     #entrar,
     #criar {
         height: 54px;
@@ -555,6 +678,34 @@ body.started #botaoVoltar {
 
     .mensagem-final {
         font-size: 9px;
+    }
+
+    .extras {
+        top: 50%;
+        max-height: 76vh;
+        padding: 15px;
+    }
+
+    .extras h2 {
+        font-size: 14px;
+    }
+
+    .extra-opcao {
+        padding: 12px;
+    }
+
+    .extra-opcao p {
+        font-size: 8px;
+    }
+
+    .extra-titulo {
+        font-size: 11px;
+        line-height: 1.8;
+    }
+
+    .botao-extra {
+        height: 54px;
+        font-size: clamp(11px, 3.4vw, 16px);
     }
 }
 .erro {

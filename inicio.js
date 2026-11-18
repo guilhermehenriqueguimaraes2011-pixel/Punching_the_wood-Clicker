@@ -7,6 +7,7 @@
                 document.getElementById("botaoCriar").disabled = false;
                 document.getElementById("botaoEntrar").disabled = false;
                 document.getElementById("botaoInformacoes").disabled = false;
+                document.getElementById("botaoExtras").disabled = false;
 
                 if (audio) {
                     audio.volume = 0;
@@ -50,13 +51,13 @@ $(document).ready(function() {
     let BtEntrar = $("#botaoEntrar");
 
 function mudandoPagina() {
-    $("#botaoCriar, #botaoEntrar, #botaoInformacoes").prop("disabled", true);
+    $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras").prop("disabled", true);
 
     $("#UsuarioEntrar").prop("disabled", false);
     $("#SenhaEntrar").prop("disabled", false);
     $("#entrar").prop("disabled", false);
 
-    $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
+    $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras")
         .removeClass("visivel")
         .addClass("escondido");
 
@@ -66,11 +67,11 @@ function mudandoPagina() {
     }
 
     function voltarPagina() {
-        $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
+        $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras")
             .removeClass("escondido")
             .addClass("visivel");
 
-        $("#botaoInformacoes").prop("disabled", false);
+        $("#botaoInformacoes, #botaoExtras").prop("disabled", false);
 
         $(".entrando")
             .removeClass("visivel")
@@ -86,13 +87,13 @@ $(document).ready(function() {
 
     let BtCriar = $("#botaoCriar");
 function mudandoPagina() {
-    $("#botaoCriar, #botaoEntrar, #botaoInformacoes").prop("disabled", true);
+    $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras").prop("disabled", true);
 
     $("#UsuarioCriar").prop("disabled", false);
     $("#SenhaCriar").prop("disabled", false);
     $("#criar").prop("disabled", false);
 
-    $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
+    $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras")
         .removeClass("visivel")
         .addClass("escondido");
 
@@ -102,11 +103,11 @@ function mudandoPagina() {
     }
 
     function voltarPagina() {
-        $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
+        $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras")
             .removeClass("escondido")
             .addClass("visivel");
 
-        $("#botaoInformacoes").prop("disabled", false);
+        $("#botaoInformacoes, #botaoExtras").prop("disabled", false);
 
         $(".criando")
             .removeClass("visivel")
@@ -118,12 +119,35 @@ function mudandoPagina() {
     $("#botaoVoltar").on("click", voltarPagina);
 
 });
+// BOTÃO EXTRAS
+$(document).ready(function() {
+    $("#botaoExtras").on("click", function() {
+        $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras")
+            .addClass("escondido");
+        $(".extras").addClass("visivel");
+    });
+
+    $("#fecharExtras").on("click", function() {
+        $(".extras").removeClass("visivel");
+        $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras")
+            .removeClass("escondido");
+    });
+
+    $("#botaoVoltar").on("click", function() {
+        if ($(".extras").hasClass("visivel")) {
+            $(".extras").removeClass("visivel");
+            $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras")
+                .removeClass("escondido");
+        }
+    });
+});
+
 $(document).ready(function() {
 
     function voltarInicio() {
         $("body").removeClass("started");
 
-        $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
+        $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras")
             .prop("disabled", true)
             .removeClass("escondido")
             .removeClass("visivel");
@@ -136,6 +160,7 @@ $(document).ready(function() {
         $("#entrar").prop("disabled", true);
 
         $(".criando").removeClass("visivel");
+        $(".extras").removeClass("visivel");
         $("#UsuarioCriar").prop("disabled", true).val("");
         $("#SenhaCriar").prop("disabled", true).val("");
         $("#criar").prop("disabled", true);
@@ -148,14 +173,14 @@ $(document).ready(function() {
 // BOTÃO INFORMAÇÕES
 $(document).ready(function() {
     $("#botaoInformacoes").on("click", function() {
-        $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
+        $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras")
             .addClass("escondido");
         $(".informacoes").addClass("visivel");
     });
 
     $("#fecharInformacoes").on("click", function() {
         $(".informacoes").removeClass("visivel");
-        $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
+        $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras")
             .removeClass("escondido");
     });
 
@@ -163,7 +188,7 @@ $(document).ready(function() {
     $("#botaoVoltar").on("click", function() {
         if ($(".informacoes").hasClass("visivel")) {
             $(".informacoes").removeClass("visivel");
-            $("#botaoCriar, #botaoEntrar, #botaoInformacoes")
+            $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras")
                 .removeClass("escondido");
         }
     });
