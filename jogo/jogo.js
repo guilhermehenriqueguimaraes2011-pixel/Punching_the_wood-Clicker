@@ -185,6 +185,7 @@ let musica = document.querySelector("#bgm");
 let somSoco = document.querySelector("#somSoco");
 let promptInicio = document.querySelector("#promptInicio");
 let madeira = document.querySelector(".madeira img");
+let madeiraImpacto = document.querySelector("#minecraftImpacto");
 let particulas = document.querySelector(".particulas");
 let notificacaoConquista = document.querySelector("#notificacaoConquista");
 
@@ -194,6 +195,8 @@ const temas = {
         personagemAcao: "assets/sprites/Default/JerryAction.gif",
         madeiraParada: "assets/sprites/Default/default_wood_idle.png",
         madeiraAcao: "assets/sprites/Default/default_wood_action.png",
+        somFixo: "assets/musics/hitsounds/universfield-classic-punch-impact-352711.mp3",
+        sonsAleatorios: [],
         fundo: "assets/backgrounds/Clareira_Pixelada.png",
         musica: "assets/musics/Clicker_Default_Variant.mp3"
     },
@@ -202,6 +205,13 @@ const temas = {
         personagemAcao: "assets/sprites/Sonic/SonicAction.gif",
         madeiraParada: "assets/sprites/Sonic/sonic_monitor_idle.png",
         madeiraAcao: "assets/sprites/Sonic/sonic_monitor_action.gif",
+        somFixo: "assets/musics/hitsounds/sonic/sonic-1-kick-drum.mp3",
+        interrompeSomAleatorio: true,
+        sonsAleatorios: [
+            "assets/musics/hitsounds/sonic/alright-sonic-cd.mp3",
+            "assets/musics/hitsounds/sonic/cmon-sonic-3-sample.mp3",
+            "assets/musics/hitsounds/sonic/sonic-cd-yeah.mp3"
+        ],
         fundo: "assets/backgrounds/Green_Hill.png",
         musica: "assets/musics/Clicker_Sonic_Variant.mp3"
     },
@@ -210,8 +220,36 @@ const temas = {
         personagemAcao: "assets/sprites/Mario-Bros/MarioAction.gif",
         madeiraParada: "assets/sprites/Mario-Bros/Koopa_Troopa_Idle.png",
         madeiraAcao: "assets/sprites/Mario-Bros/Koopa_Troopa_Action.png",
+        somFixo: "assets/musics/hitsounds/mario/mario-fireball.mp3",
+        interrompeSomAleatorio: true,
+        sonsAleatorios: [
+            "assets/musics/hitsounds/mario/sm64_mario_haha-online-audio-converter.mp3",
+            "assets/musics/hitsounds/mario/sm64_mario_hoo.wav",
+            "assets/musics/hitsounds/mario/sm64_mario_hoohoo.wav",
+            "assets/musics/hitsounds/mario/sm64_mario_waha.wav"
+        ],
         fundo: "assets/backgrounds/Mushroom_Kingdom.png",
         musica: "assets/musics/Clicker_Mario_Variant.mp3"
+    },
+    minecraft: {
+        personagemParado: "assets/sprites/Minecraft/Minecraft-Idle.png",
+        personagemAcao: "assets/sprites/Minecraft/Minecraft-Action.gif",
+        madeiraParada: "assets/sprites/Minecraft/Minecraft_oak_log-Idle.png",
+        madeiraAcoes: [
+            "assets/sprites/Minecraft/Minecraft_oak_log-Action/sprite_0.png",
+            "assets/sprites/Minecraft/Minecraft_oak_log-Action/sprite_1.png",
+            "assets/sprites/Minecraft/Minecraft_oak_log-Action/sprite_2.png",
+            "assets/sprites/Minecraft/Minecraft_oak_log-Action/sprite_3.png"
+        ],
+        somFixo: null,
+        sonsAleatorios: [
+            "assets/musics/hitsounds/minecraft/Wood_dig1.ogg",
+            "assets/musics/hitsounds/minecraft/Wood_dig2.ogg",
+            "assets/musics/hitsounds/minecraft/Wood_dig3.ogg",
+            "assets/musics/hitsounds/minecraft/Wood_dig4.ogg"
+        ],
+        fundo: "assets/backgrounds/Minecraft-Background.jpg",
+        musica: "assets/musics/Clicker_Minecraft_Variant.mp3"
     }
 };
 let temaAtual = temas.default;
@@ -228,6 +266,9 @@ function lerTemasComprados(inventario) {
 }
 
 const temasComprados = new Set(lerTemasComprados(dadosJogador && dadosJogador.inventario));
+const sonsHitAtivos = new Set();
+const sonsHitInterrompidos = new WeakSet();
+let somAleatorioHitAtivo = null;
 let temporizador;
 let temporizadorMadeira;
 let temporizadorImpacto;
@@ -317,13 +358,74 @@ function atualizarMusicaTema() {
     }
 }
 
+function pararSomAleatorioHit() {
+    if (!somAleatorioHitAtivo) return;
+
+    sonsHitInterrompidos.add(somAleatorioHitAtivo);
+    somAleatorioHitAtivo.pause();
+    somAleatorioHitAtivo.currentTime = 0;
+    sonsHitAtivos.delete(somAleatorioHitAtivo);
+    somAleatorioHitAtivo = null;
+}
+
+function tocarHitSound(caminho, aleatorio = false) {
+    if (somSoco && caminho === temas.default.somFixo) {
+        somSoco.currentTime = 0;
+        const reproducao = somSoco.play();
+        if (reproducao) {
+            reproducao.catch((erro) => {
+                console.error("Não foi possível reproduzir o hit sound:", erro);
+            });
+        }
+        return;
+    }
+
+    const som = new Audio(caminho);
+    som.volume = somSoco ? somSoco.volume : 1;
+    sonsHitAtivos.add(som);
+    if (aleatorio && temaAtual.interrompeSomAleatorio) {
+        somAleatorioHitAtivo = som;
+    }
+    som.addEventListener("ended", () => {
+        sonsHitAtivos.delete(som);
+        if (somAleatorioHitAtivo === som) {
+            somAleatorioHitAtivo = null;
+        }
+    }, { once: true });
+    const reproducao = som.play();
+    if (reproducao) {
+        reproducao.catch((erro) => {
+            sonsHitAtivos.delete(som);
+            if (somAleatorioHitAtivo === som) {
+                somAleatorioHitAtivo = null;
+            }
+            if (!sonsHitInterrompidos.has(som)) {
+                console.error(`Não foi possível reproduzir o hit sound "${caminho}":`, erro);
+            }
+        });
+    }
+}
+
+function tocarSonsTema() {
+    if (temaAtual.interrompeSomAleatorio) {
+        pararSomAleatorioHit();
+    }
+
+    if (temaAtual.somFixo) {
+        tocarHitSound(temaAtual.somFixo);
+    }
+
+    const sonsAleatorios = temaAtual.sonsAleatorios;
+    if (sonsAleatorios.length > 0) {
+        const somAleatorio = sonsAleatorios[Math.floor(Math.random() * sonsAleatorios.length)];
+        tocarHitSound(somAleatorio, true);
+    }
+}
+
 function processarClique() {
     if (!personagem || !contador) return;
 
-    if (somSoco) {
-        somSoco.currentTime = 0;
-        somSoco.play();
-    }
+    tocarSonsTema();
 
     if (promptInicio) {
         promptInicio.classList.add("escondido");
@@ -361,15 +463,24 @@ function processarClique() {
     if (madeira) {
         clearTimeout(temporizadorMadeira);
         clearTimeout(temporizadorImpacto);
-        madeira.src = `${temaAtual.madeiraAcao}?t=${Date.now()}`;
-        madeira.classList.add("impacto");
         soltarParticulas();
-        temporizadorImpacto = setTimeout(() => {
-            madeira.classList.remove("impacto");
-        }, 100);
-        temporizadorMadeira = setTimeout(() => {
-            madeira.src = temaAtual.madeiraParada;
-        }, 300);
+        if (temaAtual === temas.minecraft) {
+            const spritesImpacto = temaAtual.madeiraAcoes;
+            madeiraImpacto.src = spritesImpacto[Math.floor(Math.random() * spritesImpacto.length)];
+            madeiraImpacto.classList.add("visivel");
+            temporizadorMadeira = setTimeout(() => {
+                madeiraImpacto.classList.remove("visivel");
+            }, 300);
+        } else {
+            madeira.src = `${temaAtual.madeiraAcao}?t=${Date.now()}`;
+            madeira.classList.add("impacto");
+            temporizadorImpacto = setTimeout(() => {
+                madeira.classList.remove("impacto");
+            }, 100);
+            temporizadorMadeira = setTimeout(() => {
+                madeira.src = temaAtual.madeiraParada;
+            }, 300);
+        }
         clicaNaMadeira();
     }
 }
@@ -488,9 +599,11 @@ function selecionarTema(nome) {
     clearTimeout(temporizador);
     clearTimeout(temporizadorMadeira);
     clearTimeout(temporizadorImpacto);
+    pararSomAleatorioHit();
     temaAtual = temas[nome] || temas.default;
     document.querySelector(".FOV").classList.toggle("tema-sonic", nome === "sonic");
     document.querySelector(".FOV").classList.toggle("tema-mario", nome === "mario");
+    document.querySelector(".FOV").classList.toggle("tema-minecraft", nome === "minecraft");
     personagem.src = temaAtual.personagemParado;
     areaPersonagem.classList.remove("sonic-action");
     areaPersonagem.classList.toggle("sonic-idle", nome === "sonic");
@@ -498,6 +611,7 @@ function selecionarTema(nome) {
     madeira.src = temaAtual.madeiraParada;
     madeira.classList.toggle("mario-idle", nome === "mario");
     madeira.classList.remove("impacto");
+    madeiraImpacto.classList.remove("visivel");
     document.querySelector(".fundo").style.backgroundImage = `url("${temaAtual.fundo}")`;
     atualizarMusicaTema();
     atualizarBotoesTemas();

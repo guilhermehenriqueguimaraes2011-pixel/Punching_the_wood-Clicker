@@ -207,6 +207,17 @@ button:hover {
     image-rendering: pixelated;
 }
 
+.madeira .minecraft-impacto {
+    display: none;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.madeira .minecraft-impacto.visivel {
+    display: block;
+}
+
 .particulas {
     position: absolute;
     left: 50%;
@@ -239,7 +250,7 @@ button:hover {
 .contador {
     margin-top: 20px;
     margin-left: 20px;
-    width: 225px;
+    width: 300px;
     height: 60px;
     padding: 10px 15px;
     font-size: 14px;
@@ -346,6 +357,9 @@ button:hover {
 }
 
 .loja-item button {
+    box-sizing: border-box;
+    flex: 0 0 190px;
+    width: 190px;
     font-size: 12px;
     padding: 8px 10px;
 }
@@ -541,7 +555,6 @@ button:hover {
 
     .contador {
         box-sizing: border-box;
-        width: 205px;
         height: auto;
         min-height: 60px;
         font-size: 16px;
@@ -665,6 +678,7 @@ button:hover {
 
 .FOV.tema-mario .personagem {
     left: calc(30% - 20px);
+    bottom: 10%;
 }
 
 .FOV.tema-mario #madeira {
@@ -681,7 +695,21 @@ button:hover {
 }
 
 .FOV.tema-mario .madeira {
+    left: calc(30% + 360px);
+    bottom: 10%;
+}
+
+.FOV.tema-minecraft .personagem {
+    left: calc(30% + 30px);
+    bottom: 10%;
+    transform: scale(5);
+}
+
+.FOV.tema-minecraft .madeira {
     left: calc(30% + 210px);
+    bottom: 10%;
+    width: 128px;
+    height: 128px;
 }
 
 .bola-de-fogo {
@@ -722,7 +750,18 @@ button:hover {
     }
 
     .FOV.tema-mario .madeira {
-        left: calc(30% + 180px);
+        left: calc(30% + 210px);
+    }
+
+    .FOV.tema-minecraft .personagem {
+        left: calc(30% + 26px);
+        transform: scale(4);
+    }
+
+    .FOV.tema-minecraft .madeira {
+        left: calc(30% + 170px);
+        width: 102px;
+        height: 102px;
     }
 }
 
@@ -744,10 +783,23 @@ button:hover {
     }
 
     .FOV.tema-mario .personagem {
-        left: calc(50% - 148px);
+        left: calc(30% - 20px);
     }
 
     .FOV.tema-mario .madeira {
-        left: calc(50% + 32px);
+        left: calc(30% + 150px);
+        transform: scale(1.4);
+        transform-origin: bottom center;
+    }
+
+    .FOV.tema-minecraft .personagem {
+        left: calc(40% - 42px);
+        transform: scale(2);
+    }
+
+    .FOV.tema-minecraft .madeira {
+        left: calc(40% + 30px);
+        width: 51px;
+        height: 51px;
     }
 }
