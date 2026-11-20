@@ -150,7 +150,7 @@ button:hover {
 
 .prompt-inicio {
     position: absolute;
-    top: 30%;
+    top: 35%;
     left: 50%;
     z-index: 2;
     width: min(90%, 760px);
@@ -301,6 +301,12 @@ button:hover {
     color: #A5E8AC;
 }
 
+.configuracoes-janela {
+    box-sizing: border-box;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
 .loja-topo,
 .ranking-topo,
 .configuracoes-topo {
@@ -358,7 +364,9 @@ button:hover {
 .configuracoes-item1,
 .configuracoes-item2,
 .configuracoes-item3,
-.configuracoes-item4 {
+.configuracoes-item4,
+.configuracoes-item5,
+.configuracoes-item6 {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -369,8 +377,26 @@ button:hover {
 .configuracoes-item1 input,
 .configuracoes-item2 input,
 .configuracoes-item3 input,
-.configuracoes-item4 input {
+.configuracoes-item4 input,
+.configuracoes-item5 input {
     width: 100%;
+}
+
+.configuracoes-item6 button {
+    width: 100%;
+    min-height: 44px;
+}
+
+#teclaCliqueStatus {
+    min-height: 1em;
+    color: #A5E8AC;
+    font-size: 10px;
+}
+
+#teclaCliqueAjuda {
+    color: #dfffe6;
+    font-size: 10px;
+    line-height: 1.6;
 }
 
 .ranking-painel {
@@ -378,7 +404,10 @@ button:hover {
 }
 
 .ranking-janela {
-    width: min(560px, 85vw);
+    box-sizing: border-box;
+    width: min(800px, 92vw);
+    max-height: 90vh;
+    overflow-y: auto;
     background: #0f1d1a;
     border: 3px solid #72D6A0;
     box-shadow: 4px 4px 0 #153D32;
@@ -614,15 +643,10 @@ button:hover {
     transform: scale(0.95) rotate(2deg);
 }
 
-.FOV.tema-sonic .personagem.sonic-action {
-    transform: scale(20);
+.FOV.tema-sonic .personagem.sonic-idle img,
+.FOV.tema-sonic .personagem.sonic-action img {
     left: 30%;
-    transform-origin: bottom left;
-}
-
-.FOV.tema-sonic .personagem.sonic-idle img {
-    left: 30%;
-    transform: scale(0.47);
+    transform: scale(1);
     transform-origin: bottom left;
 }
 
@@ -703,7 +727,8 @@ button:hover {
 }
 
 @media (max-width: 700px) {
-    .FOV.tema-sonic .personagem.sonic-idle {
+    .FOV.tema-sonic .personagem.sonic-idle,
+    .FOV.tema-sonic .personagem.sonic-action {
         left: calc(50% - 118px);
     }
 

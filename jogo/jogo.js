@@ -8,51 +8,134 @@ try {
 }
 
 const perfilPadrao = "assets/sprites/Default/JerryIdle.gif";
+const PRECO_TEMA = 1000;
 const chaveTemaLocal = (usuario) => `punching_tema_usuario_${String(usuario || "").trim().toLowerCase()}`;
 const chaveFotoPerfilLocal = (usuario) => `punching_foto_perfil_${String(usuario || "").trim().toLowerCase()}`;
 const chaveTeclaCliqueLocal = "punching_tecla_clique";
 const teclaCliquePadrao = "Space";
+const tamanhoMaximoFotoOriginal = 10 * 1024 * 1024;
+const tamanhoMaximoFotoPerfil = 100 * 1024;
+const chavesVolumeLocal = {
+    geral: "punching_volume_geral",
+    musica: "punching_volume_musica",
+    efeitos: "punching_volume_efeitos"
+};
 
-async function salvarFotoPerfilNoServidor(usuario, foto) {
+function carregarVolumeLocal(chave) {
+    try {
+        const volumeSalvo = localStorage.getItem(chave);
+        if (volumeSalvo === null) return 100;
+
+        const volume = Number(volumeSalvo);
+        return Number.isFinite(volume) ? Math.min(100, Math.max(0, volume)) : 100;
+    } catch (erro) {
+        console.warn("Não foi possível carregar as configurações de áudio:", erro);
+        return 100;
+    }
+}
+
+function salvarVolumeLocal(chave, volume) {
+    try {
+        localStorage.setItem(chave, String(volume));
+    } catch (erro) {
+        console.warn("Não foi possível salvar as configurações de áudio:", erro);
+    }
+}
+
+function formatarTeclaClique(tecla) {
+    const nomesTeclas = {
+        Space: "Espaço",
+        " ": "Espaço",
+        Escape: "Esc",
+        ShiftLeft: "Shift esquerdo",
+        ShiftRight: "Shift direito",
+        ControlLeft: "Ctrl esquerdo",
+        ControlRight: "Ctrl direito",
+        AltLeft: "Alt esquerdo",
+        AltRight: "Alt direito",
+        MetaLeft: "Tecla Windows/Command esquerda",
+        MetaRight: "Tecla Windows/Command direita",
+        ArrowUp: "Seta para cima",
+        ArrowDown: "Seta para baixo",
+        ArrowLeft: "Seta para a esquerda",
+        ArrowRight: "Seta para a direita"
+    };
+
+    if (nomesTeclas[tecla]) return nomesTeclas[tecla];
+    if (tecla.startsWith("Key")) return tecla.slice(3).toUpperCase();
+    if (tecla.startsWith("Digit")) return tecla.slice(5);
+    return tecla;
+}
+
+async function salvarFotoPerfilNoServidor(usuario, senha, foto) {
     const nomeUsuario = String(usuario || "").trim().toLowerCase();
     const valorFoto = foto || perfilPadrao;
 
     if (!nomeUsuario) return valorFoto;
 
-    try {
-        const { data, error } = await BancoDeDados
-            .from("foto")
-            .upsert({ usuario: nomeUsuario, foto: valorFoto }, { onConflict: "usuario" })
-            .select("foto")
-            .single();
+    const { error } = await BancoDeDados.rpc("salvar_foto_perfil", {
+        p_usuario: nomeUsuario,
+        p_senha: senha,
+        p_foto: valorFoto
+    });
 
-        if (error) throw error;
-        return data?.foto || valorFoto;
-    } catch (erro) {
-        console.warn("Supabase client falhou ao salvar foto; tentando REST fallback:", erro);
+    if (error) throw error;
+    return valorFoto;
+}
+
+async function prepararFotoPerfil(arquivo) {
+    if (!arquivo.type || !arquivo.type.startsWith("image/")) {
+        throw new Error("Selecione um arquivo de imagem.");
     }
 
-    try {
-        const resposta = await fetch(`${SUPABASE_URL}/rest/v1/foto?on_conflict=usuario`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "apikey": SUPABASE_KEY,
-                "Authorization": `Bearer ${SUPABASE_KEY}`,
-                "Prefer": "resolution=merge-duplicates"
-            },
-            body: JSON.stringify({ usuario: nomeUsuario, foto: valorFoto })
-        });
+    if (arquivo.size > tamanhoMaximoFotoOriginal) {
+        throw new Error("A imagem original deve ter no máximo 10 MB.");
+    }
 
-        if (!resposta.ok) {
-            const textoErro = await resposta.text();
-            throw new Error(`REST falhou (${resposta.status}): ${textoErro}`);
+    const urlTemporaria = URL.createObjectURL(arquivo);
+    try {
+        const imagem = new Image();
+        const carregamento = new Promise((resolve, reject) => {
+            imagem.onload = resolve;
+            imagem.onerror = () => reject(new Error("Não foi possível abrir esta imagem."));
+        });
+        imagem.src = urlTemporaria;
+        await carregamento;
+
+        const maiorLado = Math.max(imagem.naturalWidth, imagem.naturalHeight);
+        if (!maiorLado) {
+            throw new Error("A imagem selecionada está vazia ou é inválida.");
         }
 
-        return valorFoto;
-    } catch (erroRest) {
-        console.error("Não foi possível salvar a foto no servidor:", erroRest);
-        return valorFoto;
+        const escala = Math.min(1, 256 / maiorLado);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(imagem.naturalWidth * escala));
+        canvas.height = Math.max(1, Math.round(imagem.naturalHeight * escala));
+
+        const contexto = canvas.getContext("2d");
+        if (!contexto) {
+            throw new Error("Não foi possível processar a imagem neste navegador.");
+        }
+        contexto.drawImage(imagem, 0, 0, canvas.width, canvas.height);
+
+        const blob = await new Promise((resolve) => {
+            canvas.toBlob(resolve, "image/webp", 0.8);
+        });
+        if (!blob) {
+            throw new Error("Não foi possível compactar a imagem.");
+        }
+        if (blob.size > tamanhoMaximoFotoPerfil) {
+            throw new Error("A imagem compactada excedeu o limite de 100 KB. Escolha outra imagem.");
+        }
+
+        return await new Promise((resolve, reject) => {
+            const leitor = new FileReader();
+            leitor.onload = () => resolve(String(leitor.result || ""));
+            leitor.onerror = () => reject(new Error("Não foi possível ler a imagem compactada."));
+            leitor.readAsDataURL(blob);
+        });
+    } finally {
+        URL.revokeObjectURL(urlTemporaria);
     }
 }
 
@@ -62,36 +145,14 @@ async function buscarFotoPerfilDoServidor(usuario) {
     if (!nomeUsuario) return perfilPadrao;
 
     try {
-        const { data, error } = await BancoDeDados
-            .from("foto")
-            .select("foto")
-            .eq("usuario", nomeUsuario)
-            .maybeSingle();
-
-        if (error) throw error;
-        return data?.foto || perfilPadrao;
-    } catch (erro) {
-        console.warn("Supabase client falhou ao buscar foto; tentando REST fallback:", erro);
-    }
-
-    try {
-        const resposta = await fetch(`${SUPABASE_URL}/rest/v1/foto?select=foto&usuario=eq.${encodeURIComponent(nomeUsuario)}`, {
-            headers: {
-                "apikey": SUPABASE_KEY,
-                "Authorization": `Bearer ${SUPABASE_KEY}`,
-                "Content-Type": "application/json"
-            }
+        const { data, error } = await BancoDeDados.rpc("buscar_foto_perfil", {
+            p_usuario: nomeUsuario
         });
 
-        if (!resposta.ok) {
-            const textoErro = await resposta.text();
-            throw new Error(`REST falhou (${resposta.status}): ${textoErro}`);
-        }
-
-        const dados = await resposta.json();
-        return Array.isArray(dados) && dados.length > 0 ? (dados[0].foto || perfilPadrao) : perfilPadrao;
-    } catch (erroRest) {
-        console.error("Não foi possível buscar a foto do servidor:", erroRest);
+        if (error) throw error;
+        return data || perfilPadrao;
+    } catch (erro) {
+        console.error("Não foi possível buscar a foto do servidor:", erro);
         return perfilPadrao;
     }
 }
@@ -318,23 +379,45 @@ if (personagem && contador) {
 }
 
 const teclaCliqueConfig = document.getElementById("teclaClique");
+const teclaCliqueStatus = document.getElementById("teclaCliqueStatus");
 let teclaCliqueAtiva = getTeclaCliqueSalva();
+let aguardandoTeclaClique = false;
 
 function aplicarTeclaClique(tecla) {
     teclaCliqueAtiva = tecla || teclaCliquePadrao;
     salvarTeclaClique(teclaCliqueAtiva);
 
     if (teclaCliqueConfig) {
-        teclaCliqueConfig.value = teclaCliqueAtiva;
+        teclaCliqueConfig.textContent = formatarTeclaClique(teclaCliqueAtiva);
     }
 }
 
 if (teclaCliqueConfig) {
-    aplicarTeclaClique(getTeclaCliqueSalva());
-    teclaCliqueConfig.addEventListener("change", function() {
-        aplicarTeclaClique(this.value);
+    aplicarTeclaClique(teclaCliqueAtiva);
+    teclaCliqueConfig.addEventListener("click", function() {
+        aguardandoTeclaClique = true;
+        teclaCliqueConfig.textContent = "Aguardando tecla...";
+        if (teclaCliqueStatus) {
+            teclaCliqueStatus.textContent = "Pressione a tecla que deseja usar.";
+        }
     });
 }
+
+document.addEventListener("keydown", function(event) {
+    if (!aguardandoTeclaClique || event.repeat) return;
+
+    const teclaCapturada = event.code && event.code !== "Unidentified" ? event.code : event.key;
+    if (!teclaCapturada || teclaCapturada === "Unidentified") return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    aguardandoTeclaClique = false;
+    aplicarTeclaClique(teclaCapturada);
+
+    if (teclaCliqueStatus) {
+        teclaCliqueStatus.textContent = `Tecla selecionada: ${formatarTeclaClique(teclaCapturada)}`;
+    }
+}, true);
 
 document.addEventListener("keydown", function(event) {
     const alvo = event.target;
@@ -346,8 +429,10 @@ document.addEventListener("keydown", function(event) {
     );
 
     if (eInputOuTexto) return;
+    const configuracoesPainel = document.getElementById("configuracoesPainel");
+    if (configuracoesPainel && configuracoesPainel.classList.contains("aberta")) return;
     if (event.repeat) return;
-    if (event.code !== teclaCliqueAtiva) return;
+    if (event.code !== teclaCliqueAtiva && event.key !== teclaCliqueAtiva) return;
 
     event.preventDefault();
     processarClique();
@@ -381,9 +466,12 @@ function atualizarBotoesTemas() {
         } else if (comprado) {
             botao.textContent = "Usar tema";
             botao.disabled = false;
+        } else if (precisaMigrarTemas) {
+            botao.textContent = "Atualização pendente";
+            botao.disabled = true;
         } else {
-            botao.textContent = "Comprar (50)";
-            botao.disabled = totalCliques < 50;
+            botao.textContent = `Comprar (${PRECO_TEMA})`;
+            botao.disabled = totalCliques < PRECO_TEMA;
         }
     });
 }
@@ -448,11 +536,16 @@ document.querySelectorAll("[data-theme]").forEach((botao) => {
             return;
         }
 
-        if (totalCliques < 50) {
+        if (precisaMigrarTemas) {
+            alert("A atualização dos temas ainda não foi aplicada à sua conta. Tente novamente mais tarde.");
             return;
         }
 
-        totalCliques -= 50;
+        if (totalCliques < PRECO_TEMA) {
+            return;
+        }
+
+        totalCliques -= PRECO_TEMA;
         temasComprados.add(nomeTema);
         salvarTemaComprado(nomeTema);
         atualizarTela();
@@ -477,15 +570,25 @@ $(document).ready(function() {
     const $volumeGeral = $("#volumeGeral");
     const $volumeMusica = $("#volumeMusica");
     const $volumeSFX = $("#volumeSFX");
-    let volumeMusica = 1;
-    let volumeSFX = 1;
+    $volumeGeral.val(carregarVolumeLocal(chavesVolumeLocal.geral));
+    let volumeMusica = carregarVolumeLocal(chavesVolumeLocal.musica) / 100;
+    let volumeSFX = carregarVolumeLocal(chavesVolumeLocal.efeitos) / 100;
+    $volumeMusica.val(volumeMusica * 100);
+    $volumeSFX.val(volumeSFX * 100);
 
     function atualizarVolumeMusica() {
-    musica.volume = ($volumeGeral.val() / 100) * volumeMusica;
-}
-function atualizarVolumeSFX() {
-    somSoco.volume = ($volumeGeral.val() / 100) * volumeSFX;
-}
+        if (musica) {
+            musica.volume = (Number($volumeGeral.val()) / 100) * volumeMusica;
+        }
+    }
+    function atualizarVolumeSFX() {
+        if (somSoco) {
+            somSoco.volume = (Number($volumeGeral.val()) / 100) * volumeSFX;
+        }
+    }
+
+    atualizarVolumeMusica();
+    atualizarVolumeSFX();
 
     function abrirLoja() {
         $(".FOV").addClass("modo-fov");
@@ -509,7 +612,7 @@ function atualizarVolumeSFX() {
 
             if (error) throw error;
 
-            const { data: fotosData, error: fotosError } = await BancoDeDados.from("foto").select("usuario, foto");
+            const { data: fotosData, error: fotosError } = await BancoDeDados.rpc("listar_fotos_perfil");
             const fotosPorUsuario = new Map();
 
             if (!fotosError && Array.isArray(fotosData)) {
@@ -627,19 +730,21 @@ $configuracoesPainel.on("click", function(event) {
         fecharConfiguracoes();
     }
 });
-$volumeGeral.on("input", function() {
-atualizarVolumeMusica();
-    atualizarVolumeSFX();
-
-});
-$volumeMusica.on("input", function() {
-    volumeMusica = this.value / 100;
-atualizarVolumeMusica();
-});
-$volumeSFX.on("input", function() {
-    volumeSFX = this.value / 100;
-    atualizarVolumeSFX();
-});
+    $volumeGeral.on("input change", function() {
+        salvarVolumeLocal(chavesVolumeLocal.geral, this.value);
+        atualizarVolumeMusica();
+        atualizarVolumeSFX();
+    });
+    $volumeMusica.on("input change", function() {
+        volumeMusica = Number(this.value) / 100;
+        salvarVolumeLocal(chavesVolumeLocal.musica, this.value);
+        atualizarVolumeMusica();
+    });
+    $volumeSFX.on("input change", function() {
+        volumeSFX = Number(this.value) / 100;
+        salvarVolumeLocal(chavesVolumeLocal.efeitos, this.value);
+        atualizarVolumeSFX();
+    });
 });
 
 let totalCliques = 0;
@@ -655,6 +760,8 @@ const melhoriasSalvas = dadosJogador && dadosJogador.upgrades &&
     typeof dadosJogador.upgrades === "object" && !Array.isArray(dadosJogador.upgrades)
     ? dadosJogador.upgrades.punchingTheWood || {}
     : {};
+const precisaMigrarTemas =
+    temasComprados.size > 0 && Number(melhoriasSalvas.themePriceVersion) !== 2;
 const scoreMaximoSalvo = Math.max(
     Number(dadosJogador && dadosJogador.score_maximo) || 0,
     Number(dadosJogador && dadosJogador.scoreMaximo) || 0,
@@ -677,12 +784,12 @@ nivelMelhoriaClique = Math.max(0, Math.floor(Number(melhoriasSalvas.clickLevel) 
 nivelMelhoriaSegundo = Math.max(0, Math.floor(Number(melhoriasSalvas.perSecondLevel) || 0));
 cliquesPorClique += nivelMelhoriaClique;
 cliquesPorSegundo = nivelMelhoriaSegundo * 0.5;
-custoMelhoria = Number(melhoriasSalvas.clickCost) > 0
-    ? Number(melhoriasSalvas.clickCost)
-    : calcularCustoMelhoria(150, 1.25, nivelMelhoriaClique);
-custoMelhoriaSegundo = Number(melhoriasSalvas.perSecondCost) > 0
-    ? Number(melhoriasSalvas.perSecondCost)
-    : calcularCustoMelhoria(150, 1.4, nivelMelhoriaSegundo);
+custoMelhoria = calcularCustoMelhoria(150, 1.25, nivelMelhoriaClique);
+custoMelhoriaSegundo = calcularCustoMelhoria(150, 1.4, nivelMelhoriaSegundo);
+let upgradesPrecisamSerSalvos =
+    Number(melhoriasSalvas.clickCost) !== custoMelhoria ||
+    Number(melhoriasSalvas.perSecondCost) !== custoMelhoriaSegundo ||
+    (!precisaMigrarTemas && Number(melhoriasSalvas.themePriceVersion) !== 2);
 
 function atualizarMelhoriasSalvas() {
     if (!dadosJogador) return;
@@ -691,15 +798,20 @@ function atualizarMelhoriasSalvas() {
         typeof dadosJogador.upgrades === "object" && !Array.isArray(dadosJogador.upgrades)
         ? dadosJogador.upgrades
         : {};
+    const versaoPrecoTemas = temasComprados.size === 0 || Number(melhoriasSalvas.themePriceVersion) === 2
+        ? 2
+        : melhoriasSalvas.themePriceVersion;
 
     dadosJogador.upgrades = {
         ...upgrades,
         punchingTheWood: {
+            ...melhoriasSalvas,
             clickLevel: nivelMelhoriaClique,
             clickCost: custoMelhoria,
             perSecondLevel: nivelMelhoriaSegundo,
             perSecondCost: custoMelhoriaSegundo,
-            scoreMaximo: scoreMaximo
+            scoreMaximo: scoreMaximo,
+            ...(versaoPrecoTemas === undefined ? {} : { themePriceVersion: versaoPrecoTemas })
         }
     };
 }
@@ -882,7 +994,7 @@ async function salvarProgresso() {
         temporizadorSalvar = setTimeout(salvarProgresso, 500);
         return;
     }
-    if (totalCliques === ultimoSalvo && scoreMaximo === ultimoScoreMaximoSalvo) return;
+    if (totalCliques === ultimoSalvo && scoreMaximo === ultimoScoreMaximoSalvo && !upgradesPrecisamSerSalvos) return;
 
     salvando = true;
     const valor = totalCliques;
@@ -899,6 +1011,7 @@ async function salvarProgresso() {
 
         ultimoSalvo = valor;
         ultimoScoreMaximoSalvo = scoreMaximo;
+        upgradesPrecisamSerSalvos = false;
         dadosJogador.score = valor;
         sessionStorage.setItem("dadosJogador", JSON.stringify(dadosJogador));
     } catch (e) {
@@ -917,7 +1030,7 @@ setInterval(salvarProgresso, 5000);
 
 function salvarAoSair() {
     if (!jogador || !senhaJogador || !dadosJogador) return;
-    if (totalCliques === ultimoSalvo && scoreMaximo === ultimoScoreMaximoSalvo) return;
+    if (totalCliques === ultimoSalvo && scoreMaximo === ultimoScoreMaximoSalvo && !upgradesPrecisamSerSalvos) return;
 
     fetch(`${SUPABASE_URL}/rest/v1/rpc/salvar`, {
         method: "POST",
@@ -937,6 +1050,7 @@ function salvarAoSair() {
 
     ultimoSalvo = totalCliques;
     ultimoScoreMaximoSalvo = scoreMaximo;
+    upgradesPrecisamSerSalvos = false;
     dadosJogador.score = totalCliques;
     sessionStorage.setItem("dadosJogador", JSON.stringify(dadosJogador));
 }
@@ -945,6 +1059,10 @@ document.addEventListener("visibilitychange", function() {
     if (document.visibilityState === "hidden") salvarAoSair();
 });
 window.addEventListener("pagehide", salvarAoSair);
+
+if (upgradesPrecisamSerSalvos) {
+    salvarProgresso();
+}
 
 const usuarioInfo = document.querySelector("#usuarioInfo");
 const nickJogador = document.querySelector("#nickJogador");
@@ -1006,25 +1124,32 @@ if (usuarioInfo && nickJogador) {
 }
 
 if (inputFotoPerfil) {
-    inputFotoPerfil.addEventListener("change", function(event) {
+    inputFotoPerfil.addEventListener("change", async function(event) {
         const arquivo = event.target.files && event.target.files[0];
         if (!arquivo) return;
 
-        const leitor = new FileReader();
-        leitor.onload = async function() {
-            const resultado = String(leitor.result || "");
-            if (!resultado) return;
+        try {
+            if (!jogador) {
+                throw new Error("Entre na sua conta antes de trocar a foto.");
+            }
 
+            const fotoCompactada = await prepararFotoPerfil(arquivo);
+            const fotoSalva = await salvarFotoPerfilNoServidor(jogador, senhaJogador, fotoCompactada);
             if (fotoPerfil) {
-                fotoPerfil.src = resultado;
+                fotoPerfil.src = fotoSalva;
             }
-
-            if (jogador) {
-                localStorage.setItem(chaveFotoPerfilLocal(jogador), resultado);
-                await salvarFotoPerfilNoServidor(jogador, resultado);
+            try {
+                localStorage.setItem(chaveFotoPerfilLocal(jogador), fotoSalva);
+            } catch (erro) {
+                console.warn("Foto salva no servidor, mas não foi possível guardá-la no navegador:", erro);
             }
-        };
-        leitor.readAsDataURL(arquivo);
+        } catch (erro) {
+            console.error("Não foi possível atualizar a foto de perfil:", erro);
+            const detalhe = erro && erro.message ? erro.message : "Erro desconhecido.";
+            alert(`Não foi possível salvar a foto de perfil. ${detalhe}`);
+        } finally {
+            inputFotoPerfil.value = "";
+        }
     });
 }
 

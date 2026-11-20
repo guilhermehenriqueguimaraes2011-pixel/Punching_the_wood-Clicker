@@ -29,6 +29,8 @@ body.started::before {
     display: flex;
     flex-direction: column;
     align-items: center;
+    box-sizing: border-box;
+    padding-bottom: 24px;
 }
 
 #playButton,
@@ -158,14 +160,12 @@ body.started #botaoExtras.escondido {
     pointer-events: none;
 }
 .container {
-    position: absolute;
-    top: 65%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
     display: grid;
     align-items: center;
     justify-items: center;
-    row-gap: 100px;
+    row-gap: clamp(16px, 3vh, 28px);
+    margin: clamp(24px, 8vh, 64px) 0 40px;
 }
 
 #playButton,
@@ -186,7 +186,9 @@ body.started #botaoExtras.escondido {
 }
 
 #UsuarioEntrar,
-#SenhaEntrar {
+#SenhaEntrar,
+#UsuarioCriar,
+#SenhaCriar {
     width: 370px;
     height: 60px;
     box-sizing: border-box;
@@ -202,18 +204,80 @@ body.started #botaoExtras.escondido {
     transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
+.campo-senha {
+    position: relative;
+    width: 370px;
+    max-width: 100%;
+    height: 60px;
+}
+
+#SenhaEntrar,
+#SenhaCriar {
+    width: 100%;
+    padding-right: 60px;
+}
+
 #UsuarioEntrar::placeholder,
-#SenhaEntrar::placeholder {
+#SenhaEntrar::placeholder,
+#UsuarioCriar::placeholder,
+#SenhaCriar::placeholder {
     color: #4F8F73;
     font-family: "Press Start 2P", monospace;
     font-size: 12px;
 }
 
 #UsuarioEntrar:focus,
-#SenhaEntrar:focus {
+#SenhaEntrar:focus,
+#UsuarioCriar:focus,
+#SenhaCriar:focus {
     background-color: #153D32;
     border-color: #A5E8AC;
     color: white;
+}
+
+.botao-mostrar-senha {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 8px;
+    color: #A5E8AC;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+.botao-mostrar-senha:hover {
+    color: #72D6A0;
+    background: #153D32;
+}
+
+.botao-mostrar-senha:focus-visible {
+    outline: 2px solid #A5E8AC;
+    outline-offset: -4px;
+}
+
+.botao-mostrar-senha svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+}
+
+.icone-olho-cortado,
+.botao-mostrar-senha[aria-pressed="true"] .icone-olho {
+    display: none;
+}
+
+.botao-mostrar-senha[aria-pressed="true"] .icone-olho-cortado {
+    display: block;
 }
 
 #entrar {
@@ -243,37 +307,6 @@ body.started #botaoExtras.escondido {
 #entrar:disabled {
     cursor: default;
 }
-#UsuarioCriar,
-#SenhaCriar {
-    width: 370px;
-    height: 60px;
-    box-sizing: border-box;
-    padding: 0 16px;
-    background-color: #0B1918;
-    color: #A5E8AC;
-    border: 3px solid #72D6A0;
-    border-radius: 0;
-    font-family: "Press Start 2P", monospace;
-    font-size: 14px;
-    box-shadow: 4px 4px 0 #153D32;
-    outline: none;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-#UsuarioCriar::placeholder,
-#SenhaCriar::placeholder {
-    color: #4F8F73;
-    font-family: "Press Start 2P", monospace;
-    font-size: 12px;
-}
-
-#UsuarioCriar:focus,
-#SenhaCriar:focus {
-    background-color: #153D32;
-    border-color: #A5E8AC;
-    color: white;
-}
-
 #criar {
     width: 370px;
     height: 60px;
@@ -340,7 +373,8 @@ body.started #botaoVoltar {
     transform: translate(4px, 4px);
     box-shadow: none;
 }
-.informacoes {
+.informacoes,
+.atualizacoes {
     display: none;
     opacity: 0;
     visibility: hidden;
@@ -382,13 +416,15 @@ body.started #botaoVoltar {
     color: white;
 }
 
-.informacoes.visivel {
+.informacoes.visivel,
+.atualizacoes.visivel {
     display: block;
     opacity: 1;
     visibility: visible;
 }
 
-.informacoes h2 {
+.informacoes h2,
+.atualizacoes h2 {
     font-size: 20px;
     color: white;
     padding-bottom: 20px;
@@ -397,13 +433,15 @@ body.started #botaoVoltar {
     text-shadow: 4px 4px 0 #153D32;
 }
 
-.informacoes h3 {
+.informacoes h3,
+.atualizacoes h3 {
     color: white;
     font-size: 13px;
     margin-top: 25px;
 }
 
-.informacoes p {
+.informacoes p,
+.atualizacoes p {
     font-size: 10px;
     line-height: 2.2;
 }
@@ -436,15 +474,18 @@ body.started #botaoVoltar {
     text-shadow: 3px 3px 0 #153D32;
 }
 
-.informacoes::-webkit-scrollbar {
+.informacoes::-webkit-scrollbar,
+.atualizacoes::-webkit-scrollbar {
     width: 9px;
 }
 
-.informacoes::-webkit-scrollbar-track {
+.informacoes::-webkit-scrollbar-track,
+.atualizacoes::-webkit-scrollbar-track {
     background: #07100E;
 }
 
-.informacoes::-webkit-scrollbar-thumb {
+.informacoes::-webkit-scrollbar-thumb,
+.atualizacoes::-webkit-scrollbar-thumb {
     background: #397D5C;
     border: 1px solid #72D6A0;
 }
@@ -570,9 +611,8 @@ body.started #botaoVoltar {
     #entrar,
     #criar,
     #UsuarioEntrar,
-    #SenhaEntrar,
     #UsuarioCriar,
-    #SenhaCriar {
+    .campo-senha {
         box-sizing: border-box;
         width: min(370px, calc(100vw - 48px));
     }
@@ -592,6 +632,7 @@ body.started #botaoVoltar {
     }
 
     .informacoes,
+    .atualizacoes,
     .extras {
         box-sizing: border-box;
         width: 750px;
@@ -619,12 +660,29 @@ body.started #botaoVoltar {
     }
 
     #UsuarioEntrar,
-    #SenhaEntrar,
     #UsuarioCriar,
+    #SenhaEntrar,
     #SenhaCriar {
         height: 54px;
         padding: 0 10px;
         font-size: 12px;
+    }
+
+    .campo-senha {
+        height: 54px;
+    }
+
+    #SenhaEntrar,
+    #SenhaCriar {
+        padding-right: 54px;
+    }
+
+    .botao-mostrar-senha {
+        top: 3px;
+        right: 3px;
+        width: 42px;
+        height: 42px;
+        padding: 7px;
     }
 
     #UsuarioEntrar::placeholder,
@@ -635,8 +693,7 @@ body.started #botaoVoltar {
     }
 
     .container {
-        top: 53%;
-        row-gap: 44px;
+        row-gap: 16px;
     }
 
     .entrando,
@@ -654,13 +711,15 @@ body.started #botaoVoltar {
         font-size: 20px;
     }
 
-    .informacoes {
+    .informacoes,
+    .atualizacoes {
         top: 50%;
         max-height: 76vh;
         padding: 15px;
     }
 
-    .informacoes h2 {
+    .informacoes h2,
+    .atualizacoes h2 {
         font-size: 14px;
     }
 

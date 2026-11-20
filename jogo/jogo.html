@@ -91,8 +91,8 @@
             </div>
             <div class="loja-itens">
                 <div class="loja-item"><span>Tema padrão</span><button type="button" data-theme="default">Usar tema</button></div>
-                <div class="loja-item"><span>Tema Sonic — 50 cliques</span><button type="button" data-theme="sonic">Comprar</button></div>
-                <div class="loja-item"><span>Tema Mario — 50 cliques</span><button type="button" data-theme="mario">Comprar</button></div>
+                <div class="loja-item"><span>Tema Sonic — 1.000 cliques</span><button type="button" data-theme="sonic">Comprar</button></div>
+                <div class="loja-item"><span>Tema Mario — 1.000 cliques</span><button type="button" data-theme="mario">Comprar</button></div>
             </div>
         </div>
     </div>
@@ -151,17 +151,9 @@
 
                 <div class="configuracoes-item6">
                     <label for="teclaClique">Tecla de clique</label>
-                    <select id="teclaClique">
-                        <option value="Space">Barra de espaço</option>
-                        <option value="Enter">Enter</option>
-                        <option value="KeyA">A</option>
-                        <option value="KeyS">S</option>
-                        <option value="KeyD">D</option>
-                        <option value="KeyF">F</option>
-                        <option value="KeyJ">J</option>
-                        <option value="KeyK">K</option>
-                        <option value="KeyL">L</option>
-                    </select>
+                    <button id="teclaClique" type="button" aria-describedby="teclaCliqueAjuda teclaCliqueStatus">Espaço</button>
+                    <small id="teclaCliqueAjuda">Clique no botão e pressione a tecla desejada.</small>
+                    <span id="teclaCliqueStatus" role="status" aria-live="polite"></span>
                 </div>
                 
             </div>

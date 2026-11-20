@@ -48,11 +48,31 @@ $(document).ready(function() {
         $("#SenhaEntrar").val(credenciaisSalvas.senha);
     }
 
+    function configurarAlternanciaSenha(idCampo, idBotao) {
+        const campo = document.getElementById(idCampo);
+        const botao = document.getElementById(idBotao);
+        if (!campo || !botao) return;
+
+        botao.addEventListener("click", function() {
+            const mostrarSenha = campo.type === "password";
+            campo.type = mostrarSenha ? "text" : "password";
+            botao.setAttribute("aria-pressed", String(mostrarSenha));
+            botao.setAttribute("aria-label", mostrarSenha ? "Ocultar senha" : "Mostrar senha");
+        });
+    }
+
+    configurarAlternanciaSenha("SenhaEntrar", "mostrarSenhaEntrar");
+    configurarAlternanciaSenha("SenhaCriar", "mostrarSenhaCriar");
+
     let BtEntrar = $("#botaoEntrar");
 
 function mudandoPagina() {
     $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras").prop("disabled", true);
 
+    $("#SenhaEntrar").attr("type", "password");
+    $("#mostrarSenhaEntrar")
+        .attr("aria-pressed", "false")
+        .attr("aria-label", "Mostrar senha");
     $("#UsuarioEntrar").prop("disabled", false);
     $("#SenhaEntrar").prop("disabled", false);
     $("#entrar").prop("disabled", false);
@@ -89,6 +109,10 @@ $(document).ready(function() {
 function mudandoPagina() {
     $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras").prop("disabled", true);
 
+    $("#SenhaCriar").attr("type", "password");
+    $("#mostrarSenhaCriar")
+        .attr("aria-pressed", "false")
+        .attr("aria-label", "Mostrar senha");
     $("#UsuarioCriar").prop("disabled", false);
     $("#SenhaCriar").prop("disabled", false);
     $("#criar").prop("disabled", false);
@@ -140,6 +164,25 @@ $(document).ready(function() {
                 .removeClass("escondido");
         }
     });
+
+    $("#verAtualizacoes").on("click", function() {
+        $(".extras").removeClass("visivel");
+        $(".atualizacoes").addClass("visivel");
+    });
+
+    $("#fecharAtualizacoes").on("click", function() {
+        $(".atualizacoes").removeClass("visivel");
+        $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras")
+            .removeClass("escondido");
+    });
+
+    $("#botaoVoltar").on("click", function() {
+        if ($(".atualizacoes").hasClass("visivel")) {
+            $(".atualizacoes").removeClass("visivel");
+            $("#botaoCriar, #botaoEntrar, #botaoInformacoes, #botaoExtras")
+                .removeClass("escondido");
+        }
+    });
 });
 
 $(document).ready(function() {
@@ -161,6 +204,7 @@ $(document).ready(function() {
 
         $(".criando").removeClass("visivel");
         $(".extras").removeClass("visivel");
+        $(".atualizacoes").removeClass("visivel");
         $("#UsuarioCriar").prop("disabled", true).val("");
         $("#SenhaCriar").prop("disabled", true).val("");
         $("#criar").prop("disabled", true);
@@ -201,21 +245,6 @@ $(document).ready(function() {
     "sb_publishable_dPCcGEn70ozMH7gqL44zxQ_qvIMOpFa"
 );
 
-const fotoPadraoLogin = "assets/sprites/Default/JerryIdle.gif";
-
-async function garantirFotoUsuarioNoServidor(usuario) {
-    if (!usuario) return;
-
-    try {
-        const nomeUsuario = String(usuario).trim().toLowerCase();
-        await BancoDeDados
-            .from("foto")
-            .upsert({ usuario: nomeUsuario, foto: fotoPadraoLogin }, { onConflict: "usuario" });
-    } catch (erro) {
-        console.warn("Não foi possível garantir a foto padrão do jogador:", erro);
-    }
-}
-
 function entrarNoJogo(usuario, senha, dados) {
     sessionStorage.setItem("jogador", usuario);
     sessionStorage.setItem("senhaJogador", senha);
@@ -238,8 +267,6 @@ $("#criar").on("click", async function() {
             p_senha: senha
         });
         if (error) throw error;
-
-        await garantirFotoUsuarioNoServidor(usuario);
 
         const { data, error: erroLogin } = await BancoDeDados.rpc("entrar", {
             p_usuario: usuario,
@@ -267,7 +294,6 @@ $("#entrar").on("click", async function() {
         });
         if (error) throw error;
 
-        await garantirFotoUsuarioNoServidor(usuario);
         entrarNoJogo(usuario, senha, data);
     } catch (e) {
         console.error(e.message);

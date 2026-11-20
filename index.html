@@ -26,13 +26,35 @@
         </div>
         <div class="entrando">
             <input disabled type="text" id="UsuarioEntrar" name="Usuario" placeholder="Email / Nome do usuário">
-            <input disabled type="text" id="SenhaEntrar" name="Usuario" placeholder="Senha">
+            <div class="campo-senha">
+                <input disabled type="password" id="SenhaEntrar" name="Senha" placeholder="Senha" autocomplete="current-password">
+                <button class="botao-mostrar-senha" id="mostrarSenhaEntrar" type="button" aria-label="Mostrar senha" aria-controls="SenhaEntrar" aria-pressed="false">
+                    <svg class="icone-olho" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <svg class="icone-olho-cortado" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 3 21 21M10.6 5.1A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-3.1 3.8M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7a10.7 10.7 0 0 0 4.1-.8"></path>
+                    </svg>
+                </button>
+            </div>
             <button id="entrar" disabled>Log in</button>
             <p class="erro" id="erroEntrar"></p>
         </div>
         <div class="criando">
             <input disabled type="text" id="UsuarioCriar" name="Usuario" placeholder="Email / Nome do usuário">
-            <input disabled type="text" id="SenhaCriar" name="Usuario" placeholder="Senha">
+            <div class="campo-senha">
+                <input disabled type="password" id="SenhaCriar" name="Senha" placeholder="Senha" autocomplete="new-password">
+                <button class="botao-mostrar-senha" id="mostrarSenhaCriar" type="button" aria-label="Mostrar senha" aria-controls="SenhaCriar" aria-pressed="false">
+                    <svg class="icone-olho" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <svg class="icone-olho-cortado" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 3 21 21M10.6 5.1A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-3.1 3.8M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7a10.7 10.7 0 0 0 4.1-.8"></path>
+                    </svg>
+                </button>
+            </div>
             <button id="criar" disabled>Criar</button>
             <p class="erro" id="erroCriar"></p>
         </div>
@@ -129,15 +151,31 @@
             <h2>EXTRAS</h2>
 
             <div class="extra-opcao">
+                <p>Veja as mudanças recentes do jogo.</p>
+                <button id="verAtualizacoes" class="botao-extra" type="button">Ver</button>
+            </div>
+
+            <div class="extra-opcao">
                 <p>Converse com os criadores!</p>
                 <a class="botao-extra" href="https://www.menti.com/aluijsvd4kdq" target="_blank" rel="noopener noreferrer">Feedback</a>
             </div>
 
             <div class="extra-opcao">
                 <h3 class="extra-titulo">Jogue também: Poke Defense</h3>
-                <a class="botao-extra" href="https://gustavobyrro.github.io/TP2_Grupo-B_T1/" target="_blank" rel="noopener noreferrer">Visitar</a>
+                <a class="botao-extra" href="https://gustavobyrro.github.io/PokeDefense/" target="_blank" rel="noopener noreferrer">Visitar</a>
             </div>
         </div>
+        <section class="atualizacoes" role="dialog" aria-modal="true" aria-labelledby="tituloAtualizacoes">
+            <button id="fecharAtualizacoes" class="fechar-informacoes" aria-label="Fechar atualizações" title="Fechar">✕</button>
+            <h2 id="tituloAtualizacoes">ATUALIZAÇÕES</h2>
+            <p>Os custos das melhorias foram corrigidos para acompanhar o nível de cada upgrade.</p>
+            <p>Os temas Mario e Sonic agora custam 1.000 cliques. As contas que já tinham esses temas tiveram o saldo e o inventário ajustados: para manter um tema, foi cobrado o restante; para manter os dois, era necessário ter 1.900 cliques. Sem saldo suficiente, os temas foram removidos e o valor pago foi devolvido.</p>
+            <p>(Não me matem por causa disso por favor)</p>
+            <p>O botão da tela inicial foi reposicionado para não ficar sobre o título em diferentes tamanhos de tela.</p>
+            <p>As fotos de perfil ficam salvas no banco de dados e não voltam à imagem padrão ao entrar na conta.</p>
+            <p>As configurações de volume e a tecla de clique agora ficam salvas no seu dispositivo. Você pode escolher uma tecla do teclado para clicar.</p>
+            <p>O bug em que o Sonic ficava gigante por uma fração de segundos ao clicar finalmente foi corrigido.</p>
+        </section>
         <button id="botaoVoltar">←</button>
     </main>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
